@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第2關｜新書嘗鮮趣</title>
+    <style>
+        body { margin: 0; font-family: "微軟正黑體", sans-serif; background-color: #f4f1ea; color: #333; }
+        header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; }
+        .back-btn { color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
+        .main-container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .grade-banner { background: #162c4a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 15px; justify-content: center; font-size: 16px; }
+        
+        .culture-box { background: #fff8e1; border: 2px dashed #f39c12; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
+        .culture-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .culture-header h3 { margin: 0; color: #d35400; font-size: 18px; }
+        .audio-btn { background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
+        
+        .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
+        .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
+        
+        .culture-box p { font-size: 16px; line-height: 1.6; margin-top: 0; }
+        
+        .quiz-area { background: white; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #f39c12; display: none; }
+        .quiz-btn { width: 100%; text-align: left; background: #fff; color: #333; border: 2px solid #f39c12; padding: 12px 15px; margin: 5px 0; border-radius: 5px; cursor: pointer; font-size: 15px; font-weight: bold; transition: 0.2s; }
+        .quiz-btn:hover { background: #f39c12; color: #fff; }
+        
+        #main-task-form { display: none; animation: popIn 0.5s ease-out; }
+        .intro-box { background: #e8f4f8; border-left: 5px solid #3498db; padding: 15px; margin-bottom: 25px; border-radius: 0 10px 10px 0; display: flex; gap: 15px; align-items: center; }
+        
+        .form-group { margin-bottom: 25px; text-align: left; }
+        label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 16px; color: #2c3e50; }
+        .hint { font-size: 13px; color: #7f8c8d; margin-bottom: 5px; }
+        input[type="text"], input[type="date"], input[type="number"], select, textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        textarea { height: 100px; resize: vertical; }
+        .word-count { font-size: 13px; text-align: right; margin-top: 5px; font-weight: bold; color: #e67e22; }
+        .submit-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .submit-btn:hover { background: #2ecc71; }
+        .submit-btn:disabled { background: #95a5a6; cursor: not-allowed; }
+        .section-title { background: #f39c12; color: white; padding: 10px; border-radius: 8px; margin-top: 30px; font-weight: bold; margin-bottom: 15px; }
+        .radio-group, .checkbox-group { display: flex; flex-direction: column; gap: 10px; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; }
+        .radio-group label, .checkbox-group label { font-weight: normal; font-size: 15px; cursor: pointer; }
+        @keyframes popIn { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>第2關｜新書嘗鮮趣</h2>
+        <a href="index.html" class="back-btn">返回地圖</a>
+    </header>
+    <div class="main-container">
+        <div class="grade-banner" id="user-display"></div>
+        <div class="culture-box" id="culture-box">
+            
+            <div class="culture-header">
+                <h3>🌍 冰島的聖誕文化報報</h3>
+                <button class="audio-btn" onclick="playAudio('冰島')">🔊</button>
+            </div>
+            
+            <div class="culture-img-wrapper">
+                <img src="elf.jpg" alt="冰島文化">
+            </div>
+            
+            <p>冰島的聖誕節可熱鬧了！傳說有13位調皮的「聖誕小子」，會在聖誕節前13天，一天來一位。有的愛偷香腸，有的喜歡舔湯匙，還有的愛亂關門！孩子們會把鞋子放在窗臺上，期待隔天收到小禮物。傳說乖巧的孩子可能得到糖果，調皮的孩子則可能收到馬薯。這13位小精靈，讓冰島的聖誕節充滿驚喜！</p>
+            
+            <div class="quiz-area" id="quiz-low"><strong>💡 任務解鎖測驗 (低年級)：</strong><br><br>冰島傳說中有幾位聖誕小精靈？<br><br><button class="quiz-btn" onclick="checkQuiz(false)">A. 3位</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 7位</button><button class="quiz-btn" onclick="checkQuiz(true)">C. 13位</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 20位</button></div>
+            <div class="quiz-area" id="quiz-mid"><strong>💡 任務解鎖測驗 (中年級)：</strong><br><br>為什麼冰島孩子會把鞋子放在窗臺上？<br><br><button class="quiz-btn" onclick="checkQuiz(true)">A. 希望收到聖誕小精靈送的小禮物</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 想讓鞋子變乾淨</button><button class="quiz-btn" onclick="checkQuiz(false)">C. 想把鞋子送給別人</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 希望鞋子變大</button></div>
+            <div class="quiz-area" id="quiz-high"><strong>💡 任務解鎖測驗 (高年級)：</strong><br><br>冰島的聖誕小精靈傳說，除了帶來驚喜，還具有什麼意義？<br><br><button class="quiz-btn" onclick="checkQuiz(false)">A. 告訴孩子不要穿鞋子</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 鼓勵孩子每天吃馬鈴薯</button><button class="quiz-btn" onclick="checkQuiz(false)">C. 說明每個人都要養精靈</button><button class="quiz-btn" onclick="checkQuiz(true)">D. 透過有趣的故事，提醒孩子注意自己的行為</button></div>
+        </div>
+        <div id="main-task-form">
+            <div class="intro-box">
+                <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
+                <div><strong>任務已解鎖！</strong><br>新書到站啦！每一本新書都是一扇通往奇妙世界的大門。快從圖書館的新書中選一本，讀完後把最讓你驚喜、感動或好奇的地方分享出來！</div>
+            </div>
+            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 新書書名 (沒貼書架號碼標籤的)</label><input type="text" id="b-name" required></div><div class="form-group"><label>✨ 最有印象的內容</label><textarea id="impress" oninput="checkWords('impress')" required></textarea><div id="impress-count" class="word-count">至少 15 字</div></div><div class="form-group"><label>💭 我的閱讀感想</label><textarea id="thoughts" oninput="checkWords('thoughts')" required></textarea><div id="thoughts-count" class="word-count">至少 15 字</div></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
+        </div>
+    </div>
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwJnA7jL4K0uDqoQ7g5-TuqjaVNvQvfwicwqdWPzXXqpyeVkZ4qDZvCDa-sjyz-PmvldQ/exec";
+        window.isHighReq = false;
+
+        function loadUserData() {
+            let name = localStorage.getItem('user_name');
+            if(!name) { alert("請先回到首頁登入喔！"); window.location.href = 'index.html'; return; }
+            let grade = parseInt(localStorage.getItem('student_grade'));
+            let cls = localStorage.getItem('user_class');
+            let num = localStorage.getItem('user_num');
+            document.getElementById('user-display').innerText = `👤 嗨，${name} (${cls.charAt(0)}年${cls.charAt(2)}班 ${num}號)！系統已為你分配專屬測驗。`;
+            
+            let qLow = document.getElementById('quiz-low'); let qMid = document.getElementById('quiz-mid'); let qHigh = document.getElementById('quiz-high');
+            if(qLow) qLow.style.display = 'none'; if(qMid) qMid.style.display = 'none'; if(qHigh) qHigh.style.display = 'none';
+            if (grade <= 2 && qLow) qLow.style.display = 'block';
+            else if (grade <= 4 && qMid) qMid.style.display = 'block';
+            else if (grade >= 5 && qHigh) qHigh.style.display = 'block';
+            window.isHighReq = (grade >= 3);
+            if(typeof updateReq === 'function') updateReq();
+        }
+        function checkQuiz(isCorrect) {
+            if(isCorrect) { alert("🎉 答對了！順利解鎖閱讀任務！"); localStorage.setItem('lv2_unlocked', 'true'); showMainForm(); }
+            else { alert("❌ 差一點點！回到文章找找線索，再試一次！"); }
+        }
+        function showMainForm() {
+            let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
+            if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
+        }
+        window.onload = function() { loadUserData(); if(localStorage.getItem('lv2_unlocked') === 'true') showMainForm(); };
+        
+        function playAudio(type) {
+            let text = type === '冰島' ? "冰島的聖誕節可熱鬧了！傳說有13位調皮的「聖誕小子」，會在聖誕節前13天，一天來一位。有的愛偷香腸，有的喜歡舔湯匙，還有的愛亂關門！孩子們會把鞋子放在窗臺上，期待隔天收到小禮物。傳說乖巧的孩子可能得到糖果，調皮的孩子則可能收到馬薯。這13位小精靈，讓冰島的聖誕節充滿驚喜！" : "新書到站啦！每一本新書都是一扇通往奇妙世界的大門。快從圖書館的新書中選一本，讀完後把最讓你驚喜、感動或好奇的地方分享出來！";
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
+            let voices = window.speechSynthesis.getVoices();
+            let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
+            if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
+        }
+
+        // --- 強制 JSON 傳送模組 ---
+        async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
+            let cls = localStorage.getItem('user_class') || "";
+            let num = localStorage.getItem('user_num') || "";
+            let name = localStorage.getItem('user_name') || "";
+            let fileData = ""; let fileName = ""; let fileMimeType = "";
+            let fileInput = fileInputId ? document.getElementById(fileInputId) : null;
+            let btn = e.target.querySelector('button[type="submit"]');
+            let oldText = btn.innerText;
+            btn.innerText = "資料與照片搭乘飛機傳送中，請稍候...";
+            btn.disabled = true;
+
+            if (fileInput && fileInput.files.length > 0) {
+                let file = fileInput.files[0];
+                fileName = file.name; fileMimeType = file.type;
+                try {
+                    fileData = await new Promise((resolve) => {
+                        let reader = new FileReader();
+                        reader.onload = (ev) => resolve(ev.target.result.split(',')[1]);
+                        reader.readAsDataURL(file);
+                    });
+                } catch(err) {
+                    alert("照片讀取失敗，請換一張試試看！");
+                    btn.innerText = oldText; btn.disabled = false; return;
+                }
+            }
+            
+            let payload = {
+                className: cls, seatNum: num, studentName: name,
+                level: "第" + levelId + "關", bookName: bookName,
+                task1: task1, task2: task2, task3: task3,
+                fileName: fileName, fileMimeType: fileMimeType, fileData: fileData
+            };
+            
+            try {
+                let res = await fetch(GAS_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload)
+                });
+                
+                alert("任務已成功送達圖書館！請等待志工審核。");
+                localStorage.setItem('lv' + levelId + '_status', 'approved'); 
+                window.location.href = 'index.html';
+                
+            } catch(err) {
+                alert("傳送失敗！這可能是由於網路不穩或是學校帳號權限阻擋，請確認網路連線。");
+            } finally {
+                btn.innerText = oldText; btn.disabled = false;
+            }
+        }
+
+        let minW = 15; function updateReq() { minW = window.isHighReq ? 30 : 15; checkWords('impress'); checkWords('thoughts'); } function checkWords(id) { let count = document.getElementById(id).value.replace(/\s+/g, '').length; let display = document.getElementById(id + '-count'); display.innerText = count < minW ? `至少需要 ${minW} 字，目前：${count} 字` : `目前：${count} 字 (達標 ✅)`; display.style.color = count < minW ? '#e74c3c' : '#27ae60'; return count >= minW; } async function submitForm(e) { e.preventDefault(); if(!checkWords('impress') || !checkWords('thoughts')) { alert(`字數不足 ${minW} 字！`); return; } let bName = document.getElementById('b-name').value; let t1 = "深刻內容：\n" + document.getElementById('impress').value; let t2 = "閱讀感想：\n" + document.getElementById('thoughts').value; await sendData(e, 2, bName, t1, t2, "", null); }
+    </script>
+</body>
+</html>

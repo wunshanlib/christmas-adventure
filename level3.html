@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第3關｜喜閱衝衝衝</title>
+    <style>
+        body { margin: 0; font-family: "微軟正黑體", sans-serif; background-color: #f4f1ea; color: #333; }
+        header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; }
+        .back-btn { color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
+        .main-container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .grade-banner { background: #162c4a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 15px; justify-content: center; font-size: 16px; }
+        
+        .culture-box { background: #fff8e1; border: 2px dashed #f39c12; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
+        .culture-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .culture-header h3 { margin: 0; color: #d35400; font-size: 18px; }
+        .audio-btn { background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
+        
+        .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
+        .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
+        
+        .culture-box p { font-size: 16px; line-height: 1.6; margin-top: 0; }
+        
+        .quiz-area { background: white; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #f39c12; display: none; }
+        .quiz-btn { width: 100%; text-align: left; background: #fff; color: #333; border: 2px solid #f39c12; padding: 12px 15px; margin: 5px 0; border-radius: 5px; cursor: pointer; font-size: 15px; font-weight: bold; transition: 0.2s; }
+        .quiz-btn:hover { background: #f39c12; color: #fff; }
+        
+        #main-task-form { display: none; animation: popIn 0.5s ease-out; }
+        .intro-box { background: #e8f4f8; border-left: 5px solid #3498db; padding: 15px; margin-bottom: 25px; border-radius: 0 10px 10px 0; display: flex; gap: 15px; align-items: center; }
+        
+        .form-group { margin-bottom: 25px; text-align: left; }
+        label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 16px; color: #2c3e50; }
+        .hint { font-size: 13px; color: #7f8c8d; margin-bottom: 5px; }
+        input[type="text"], input[type="date"], input[type="number"], select, textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        textarea { height: 100px; resize: vertical; }
+        .word-count { font-size: 13px; text-align: right; margin-top: 5px; font-weight: bold; color: #e67e22; }
+        .submit-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .submit-btn:hover { background: #2ecc71; }
+        .submit-btn:disabled { background: #95a5a6; cursor: not-allowed; }
+        .section-title { background: #f39c12; color: white; padding: 10px; border-radius: 8px; margin-top: 30px; font-weight: bold; margin-bottom: 15px; }
+        .radio-group, .checkbox-group { display: flex; flex-direction: column; gap: 10px; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; }
+        .radio-group label, .checkbox-group label { font-weight: normal; font-size: 15px; cursor: pointer; }
+        @keyframes popIn { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>第3關｜喜閱衝衝衝</h2>
+        <a href="index.html" class="back-btn">返回地圖</a>
+    </header>
+    <div class="main-container">
+        <div class="grade-banner" id="user-display"></div>
+        <div class="culture-box" id="culture-box">
+            
+            <div class="culture-header">
+                <h3>🌍 日本的聖誕文化報報</h3>
+                <button class="audio-btn" onclick="playAudio('日本')">🔊</button>
+            </div>
+            
+            <div class="culture-img-wrapper">
+                <img src="japan.jpg" alt="日本文化">
+            </div>
+            
+            <p>你知道嗎？在日本，聖誕節吃肯德基炸雞，是許多人喜愛的過節方式！1974年，肯德基推出聖誕節廣告，邀請大家用炸雞慶祝佳節。沒想到大受歡迎，逐漸形成特別的節慶習慣。現在，有些家庭會提前預訂炸雞套餐，搭配聖誕蛋糕，與親友共享美食。原來，商業廣告也可能創造新的節慶文化！</p>
+            
+            <div class="quiz-area" id="quiz-low"><strong>💡 任務解鎖測驗 (低年級)：</strong><br><br>日本有些家庭在聖誕節喜歡吃什麼？<br><br><button class="quiz-btn" onclick="checkQuiz(false)">A. 粽子</button><button class="quiz-btn" onclick="checkQuiz(true)">B. 肯德基炸雞</button><button class="quiz-btn" onclick="checkQuiz(false)">C. 月餅</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 湯圓</button></div>
+            <div class="quiz-area" id="quiz-mid"><strong>💡 任務解鎖測驗 (中年級)：</strong><br><br>為什麼肯德基炸雞會成為日本受歡迎的聖誕餐點？<br><br><button class="quiz-btn" onclick="checkQuiz(false)">A. 因為日本每年都下大雪</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 因為聖誕老人只喜歡炸雞</button><button class="quiz-btn" onclick="checkQuiz(true)">C. 因為1974年的廣告宣傳受到歡迎</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 因為日本法律規定要吃炸雞</button></div>
+            <div class="quiz-area" id="quiz-high"><strong>💡 任務解鎖測驗 (高年級)：</strong><br><br>日本的聖誕炸雞文化，最能說明哪一個現象？<br><br><button class="quiz-btn" onclick="checkQuiz(true)">A. 商業宣傳可能影響人們的生活，形成新的節慶習慣</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 所有國家都要吃相同的聖誕餐</button><button class="quiz-btn" onclick="checkQuiz(false)">C. 節日文化只能從古代流傳下來</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 人們慶祝聖誕節只能吃炸雞</button></div>
+        </div>
+        <div id="main-task-form">
+            <div class="intro-box">
+                <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
+                <div><strong>任務已解鎖！</strong><br>聖誕村的閱讀星星正在等待勇敢的挑戰者！讀一本書，到喜閱網完成閱讀測驗，再把成功過關的證明帶回聖誕村，就能點亮你的閱讀星星！</div>
+            </div>
+            <div style="background:#fff3cd; padding:15px; border-radius:8px; margin-bottom:20px; color: #856404; font-size:14px;"><strong>⚠️ 截圖提醒：</strong>必須清楚看到「書名」、「過關日期」與「獲得點數」。</div><form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名</label><input type="text" id="b-name" required></div><div class="form-group"><label>📸 上傳喜閱網過關截圖</label><input type="file" id="file-upload" accept="image/*" required></div><div class="form-group"><label>📅 過關日期</label><input type="date" id="date" required></div><div class="form-group"><label>💰 獲得點數 (喜閱幣)</label><input type="number" id="points" min="0" required></div><div class="form-group"><label>🎨 過關色標</label><select id="color" required><option value="">請選擇...</option><option value="白">白</option><option value="黑">黑</option><option value="紅">紅</option><option value="橙">橙</option><option value="黃">黃</option><option value="綠">綠</option><option value="藍">藍</option><option value="靛">靛</option><option value="紫">紫</option><option value="銅">銅</option><option value="銀">銀</option><option value="金">金</option></select></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
+        </div>
+    </div>
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwJnA7jL4K0uDqoQ7g5-TuqjaVNvQvfwicwqdWPzXXqpyeVkZ4qDZvCDa-sjyz-PmvldQ/exec";
+        window.isHighReq = false;
+
+        function loadUserData() {
+            let name = localStorage.getItem('user_name');
+            if(!name) { alert("請先回到首頁登入喔！"); window.location.href = 'index.html'; return; }
+            let grade = parseInt(localStorage.getItem('student_grade'));
+            let cls = localStorage.getItem('user_class');
+            let num = localStorage.getItem('user_num');
+            document.getElementById('user-display').innerText = `👤 嗨，${name} (${cls.charAt(0)}年${cls.charAt(2)}班 ${num}號)！系統已為你分配專屬測驗。`;
+            
+            let qLow = document.getElementById('quiz-low'); let qMid = document.getElementById('quiz-mid'); let qHigh = document.getElementById('quiz-high');
+            if(qLow) qLow.style.display = 'none'; if(qMid) qMid.style.display = 'none'; if(qHigh) qHigh.style.display = 'none';
+            if (grade <= 2 && qLow) qLow.style.display = 'block';
+            else if (grade <= 4 && qMid) qMid.style.display = 'block';
+            else if (grade >= 5 && qHigh) qHigh.style.display = 'block';
+            window.isHighReq = (grade >= 3);
+            if(typeof updateReq === 'function') updateReq();
+        }
+        function checkQuiz(isCorrect) {
+            if(isCorrect) { alert("🎉 答對了！順利解鎖閱讀任務！"); localStorage.setItem('lv3_unlocked', 'true'); showMainForm(); }
+            else { alert("❌ 差一點點！回到文章找找線索，再試一次！"); }
+        }
+        function showMainForm() {
+            let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
+            if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
+        }
+        window.onload = function() { loadUserData(); if(localStorage.getItem('lv3_unlocked') === 'true') showMainForm(); };
+        
+        function playAudio(type) {
+            let text = type === '日本' ? "你知道嗎？在日本，聖誕節吃肯德基炸雞，是許多人喜愛的過節方式！1974年，肯德基推出聖誕節廣告，邀請大家用炸雞慶祝佳節。沒想到大受歡迎，逐漸形成特別的節慶習慣。現在，有些家庭會提前預訂炸雞套餐，搭配聖誕蛋糕，與親友共享美食。原來，商業廣告也可能創造新的節慶文化！" : "聖誕村的閱讀星星正在等待勇敢的挑戰者！讀一本書，到喜閱網完成閱讀測驗，再把成功過關的證明帶回聖誕村，就能點亮你的閱讀星星！";
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
+            let voices = window.speechSynthesis.getVoices();
+            let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
+            if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
+        }
+
+        // --- 強制 JSON 傳送模組 ---
+        async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
+            let cls = localStorage.getItem('user_class') || "";
+            let num = localStorage.getItem('user_num') || "";
+            let name = localStorage.getItem('user_name') || "";
+            let fileData = ""; let fileName = ""; let fileMimeType = "";
+            let fileInput = fileInputId ? document.getElementById(fileInputId) : null;
+            let btn = e.target.querySelector('button[type="submit"]');
+            let oldText = btn.innerText;
+            btn.innerText = "資料與照片搭乘飛機傳送中，請稍候...";
+            btn.disabled = true;
+
+            if (fileInput && fileInput.files.length > 0) {
+                let file = fileInput.files[0];
+                fileName = file.name; fileMimeType = file.type;
+                try {
+                    fileData = await new Promise((resolve) => {
+                        let reader = new FileReader();
+                        reader.onload = (ev) => resolve(ev.target.result.split(',')[1]);
+                        reader.readAsDataURL(file);
+                    });
+                } catch(err) {
+                    alert("照片讀取失敗，請換一張試試看！");
+                    btn.innerText = oldText; btn.disabled = false; return;
+                }
+            }
+            
+            let payload = {
+                className: cls, seatNum: num, studentName: name,
+                level: "第" + levelId + "關", bookName: bookName,
+                task1: task1, task2: task2, task3: task3,
+                fileName: fileName, fileMimeType: fileMimeType, fileData: fileData
+            };
+            
+            try {
+                let res = await fetch(GAS_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload)
+                });
+                
+                alert("任務已成功送達圖書館！請等待志工審核。");
+                localStorage.setItem('lv' + levelId + '_status', 'approved'); 
+                window.location.href = 'index.html';
+                
+            } catch(err) {
+                alert("傳送失敗！這可能是由於網路不穩或是學校帳號權限阻擋，請確認網路連線。");
+            } finally {
+                btn.innerText = oldText; btn.disabled = false;
+            }
+        }
+
+        function updateReq() {} async function submitForm(e) { e.preventDefault(); let bName = document.getElementById('b-name').value; let date = document.getElementById('date').value; let points = document.getElementById('points').value; let color = document.getElementById('color').value; let t1 = `過關日期：${date}\n獲得點數：${points}\n色標：${color}`; await sendData(e, 3, bName, t1, "", "", 'file-upload'); }
+    </script>
+</body>
+</html>

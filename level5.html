@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第5關｜聖誕故事盒</title>
+    <style>
+        body { margin: 0; font-family: "微軟正黑體", sans-serif; background-color: #f4f1ea; color: #333; }
+        header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; }
+        .back-btn { color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
+        .main-container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .grade-banner { background: #162c4a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 15px; justify-content: center; font-size: 16px; }
+        
+        .culture-box { background: #fff8e1; border: 2px dashed #f39c12; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
+        .culture-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .culture-header h3 { margin: 0; color: #d35400; font-size: 18px; }
+        .audio-btn { background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
+        
+        .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
+        .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
+        
+        .culture-box p { font-size: 16px; line-height: 1.6; margin-top: 0; }
+        
+        .quiz-area { background: white; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #f39c12; display: none; }
+        .quiz-btn { width: 100%; text-align: left; background: #fff; color: #333; border: 2px solid #f39c12; padding: 12px 15px; margin: 5px 0; border-radius: 5px; cursor: pointer; font-size: 15px; font-weight: bold; transition: 0.2s; }
+        .quiz-btn:hover { background: #f39c12; color: #fff; }
+        
+        #main-task-form { display: none; animation: popIn 0.5s ease-out; }
+        .intro-box { background: #e8f4f8; border-left: 5px solid #3498db; padding: 15px; margin-bottom: 25px; border-radius: 0 10px 10px 0; display: flex; gap: 15px; align-items: center; }
+        
+        .form-group { margin-bottom: 25px; text-align: left; }
+        label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 16px; color: #2c3e50; }
+        .hint { font-size: 13px; color: #7f8c8d; margin-bottom: 5px; }
+        input[type="text"], input[type="date"], input[type="number"], select, textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        textarea { height: 100px; resize: vertical; }
+        .word-count { font-size: 13px; text-align: right; margin-top: 5px; font-weight: bold; color: #e67e22; }
+        .submit-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .submit-btn:hover { background: #2ecc71; }
+        .submit-btn:disabled { background: #95a5a6; cursor: not-allowed; }
+        .section-title { background: #f39c12; color: white; padding: 10px; border-radius: 8px; margin-top: 30px; font-weight: bold; margin-bottom: 15px; }
+        .radio-group, .checkbox-group { display: flex; flex-direction: column; gap: 10px; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; }
+        .radio-group label, .checkbox-group label { font-weight: normal; font-size: 15px; cursor: pointer; }
+        @keyframes popIn { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>第5關｜聖誕故事盒</h2>
+        <a href="index.html" class="back-btn">返回地圖</a>
+    </header>
+    <div class="main-container">
+        <div class="grade-banner" id="user-display"></div>
+        <div class="culture-box" id="culture-box">
+            
+            <div class="culture-header">
+                <h3>🌍 臺灣的聖誕文化報報</h3>
+                <button class="audio-btn" onclick="playAudio('臺灣')">🔊</button>
+            </div>
+            
+            <div class="culture-img-wrapper">
+                <img src="sharegift.jpg" alt="臺灣文化">
+            </div>
+            
+            <p>在臺灣，聖誕節雖然不是國定假日，但有些學校、公司和朋友會舉辦交換禮物活動。大家先準備一份包裝好的禮物，再透過抽籤或遊戲，交換彼此的驚喜。有時候，收到的禮物不是自己最想要的，卻可能發現意想不到的樂趣！交換禮物最重要的不是價錢，而是用心準備、尊重別人的心意，分享節日的快樂。</p>
+            
+            <div class="quiz-area" id="quiz-low"><strong>💡 任務解鎖測驗 (低年級)：</strong><br><br>臺灣有些人在聖誕節會舉辦什麼活動？<br><br><button class="quiz-btn" onclick="checkQuiz(false)">A. 划龍舟</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 放風箏</button><button class="quiz-btn" onclick="checkQuiz(true)">C. 交換禮物</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 包粽子</button></div>
+            <div class="quiz-area" id="quiz-mid"><strong>💡 任務解鎖測驗 (中年級)：</strong><br><br>為什麼交換禮物時常會有驚喜？<br><br><button class="quiz-btn" onclick="checkQuiz(false)">A. 因為每個人都知道會收到什麼</button><button class="quiz-btn" onclick="checkQuiz(true)">B. 因為透過抽籤或遊戲，不一定知道會收到哪份禮物</button><button class="quiz-btn" onclick="checkQuiz(false)">C. 因為每份禮物都非常昂貴</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 因為大家只能收到自己準備的禮物</button></div>
+            <div class="quiz-area" id="quiz-high"><strong>💡 任務解鎖測驗 (高年級)：</strong><br><br>如果交換禮物時，收到的東西不是自己最想要的，哪一種做法最符合文章想傳達的精神？<br><br><button class="quiz-btn" onclick="checkQuiz(false)">A. 當場要求對方換一份</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 把禮物丟在旁邊</button><button class="quiz-btn" onclick="checkQuiz(false)">C. 告訴大家這份禮物很差</button><button class="quiz-btn" onclick="checkQuiz(true)">D. 感謝對方的心意，試著欣賞禮物的特色</button></div>
+        </div>
+        <div id="main-task-form">
+            <div class="intro-box">
+                <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
+                <div><strong>任務已解鎖！</strong><br>恭喜來到神祕的聖誕故事盒！聖誕故事裡，除了禮物和聖誕老人，還藏著友情、勇氣、感恩與希望。快打開一本聖誕主題書，找出故事真正想告訴我們的祕密！</div>
+            </div>
+            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名 (須為聖誕主題書)</label><input type="text" id="b-name" required></div><div class="form-group"><label>📸 上傳書本封面照 (必填)</label><input type="file" id="file-upload" accept="image/*" required></div><div class="section-title">任務 A：尋找故事的主題</div><div class="form-group"><label>這本聖誕故事想告訴我們什麼？</label><div class="radio-group"><label><input type="radio" name="t" value="愛與分享" required> 愛與分享</label><label><input type="radio" name="t" value="感恩與祝福"> 感恩與祝福</label><label><input type="radio" name="t" value="勇氣與冒險"> 勇氣與冒險</label><label><input type="radio" name="t" value="友情與合作"> 友情與合作</label><label><input type="radio" name="t" value="希望與奇蹟"> 希望與奇蹟</label></div></div><div class="form-group"><label>選擇理由</label><textarea id="theme-reason" style="height:60px" oninput="checkFixedWords('theme-reason', 15)" required></textarea><div id="theme-reason-count" class="word-count">至少 15 字</div></div><div class="section-title">任務 B：故事六何解密 (5W1H)</div><div class="form-group"><label>何人 (Who)</label><input type="text" id="w-who" oninput="checkFixedWords('w-who', 2)" required><div id="w-who-count" class="word-count">至少 2 字</div></div><div class="form-group"><label>何時 (When)</label><input type="text" id="w-when" oninput="checkFixedWords('w-when', 2)" required><div id="w-when-count" class="word-count">至少 2 字</div></div><div class="form-group"><label>何地 (Where)</label><input type="text" id="w-where" oninput="checkFixedWords('w-where', 2)" required><div id="w-where-count" class="word-count">至少 2 字</div></div><div class="form-group"><label>何事 (What)</label><textarea id="w-what" oninput="triggerDynamicCheck()" required></textarea><div id="w-what-count" class="word-count dynamic-limit"></div></div><div class="form-group"><label>為何 (Why)</label><textarea id="w-why" oninput="triggerDynamicCheck()" required></textarea><div id="w-why-count" class="word-count dynamic-limit"></div></div><div class="form-group"><label>如何 (How)</label><textarea id="w-how" oninput="triggerDynamicCheck()" required></textarea><div id="w-how-count" class="word-count dynamic-limit"></div></div><button type="submit" class="submit-btn">解密完成！送出等待審核</button></form>
+        </div>
+    </div>
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwJnA7jL4K0uDqoQ7g5-TuqjaVNvQvfwicwqdWPzXXqpyeVkZ4qDZvCDa-sjyz-PmvldQ/exec";
+        window.isHighReq = false;
+
+        function loadUserData() {
+            let name = localStorage.getItem('user_name');
+            if(!name) { alert("請先回到首頁登入喔！"); window.location.href = 'index.html'; return; }
+            let grade = parseInt(localStorage.getItem('student_grade'));
+            let cls = localStorage.getItem('user_class');
+            let num = localStorage.getItem('user_num');
+            document.getElementById('user-display').innerText = `👤 嗨，${name} (${cls.charAt(0)}年${cls.charAt(2)}班 ${num}號)！系統已為你分配專屬測驗。`;
+            
+            let qLow = document.getElementById('quiz-low'); let qMid = document.getElementById('quiz-mid'); let qHigh = document.getElementById('quiz-high');
+            if(qLow) qLow.style.display = 'none'; if(qMid) qMid.style.display = 'none'; if(qHigh) qHigh.style.display = 'none';
+            if (grade <= 2 && qLow) qLow.style.display = 'block';
+            else if (grade <= 4 && qMid) qMid.style.display = 'block';
+            else if (grade >= 5 && qHigh) qHigh.style.display = 'block';
+            window.isHighReq = (grade >= 3);
+            if(typeof updateReq === 'function') updateReq();
+        }
+        function checkQuiz(isCorrect) {
+            if(isCorrect) { alert("🎉 答對了！順利解鎖閱讀任務！"); localStorage.setItem('lv5_unlocked', 'true'); showMainForm(); }
+            else { alert("❌ 差一點點！回到文章找找線索，再試一次！"); }
+        }
+        function showMainForm() {
+            let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
+            if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
+        }
+        window.onload = function() { loadUserData(); if(localStorage.getItem('lv5_unlocked') === 'true') showMainForm(); };
+        
+        function playAudio(type) {
+            let text = type === '臺灣' ? "在臺灣，聖誕節雖然不是國定假日，但有些學校、公司和朋友會舉辦交換禮物活動。大家先準備一份包裝好的禮物，再透過抽籤或遊戲，交換彼此的驚喜。有時候，收到的禮物不是自己最想要的，卻可能發現意想不到的樂趣！交換禮物最重要的不是價錢，而是用心準備、尊重別人的心意，分享節日的快樂。" : "恭喜來到神祕的聖誕故事盒！聖誕故事裡，除了禮物和聖誕老人，還藏著友情、勇氣、感恩與希望。快打開一本聖誕主題書，找出故事真正想告訴我們的祕密！";
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
+            let voices = window.speechSynthesis.getVoices();
+            let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
+            if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
+        }
+
+        // --- 強制 JSON 傳送模組 ---
+        async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
+            let cls = localStorage.getItem('user_class') || "";
+            let num = localStorage.getItem('user_num') || "";
+            let name = localStorage.getItem('user_name') || "";
+            let fileData = ""; let fileName = ""; let fileMimeType = "";
+            let fileInput = fileInputId ? document.getElementById(fileInputId) : null;
+            let btn = e.target.querySelector('button[type="submit"]');
+            let oldText = btn.innerText;
+            btn.innerText = "資料與照片搭乘飛機傳送中，請稍候...";
+            btn.disabled = true;
+
+            if (fileInput && fileInput.files.length > 0) {
+                let file = fileInput.files[0];
+                fileName = file.name; fileMimeType = file.type;
+                try {
+                    fileData = await new Promise((resolve) => {
+                        let reader = new FileReader();
+                        reader.onload = (ev) => resolve(ev.target.result.split(',')[1]);
+                        reader.readAsDataURL(file);
+                    });
+                } catch(err) {
+                    alert("照片讀取失敗，請換一張試試看！");
+                    btn.innerText = oldText; btn.disabled = false; return;
+                }
+            }
+            
+            let payload = {
+                className: cls, seatNum: num, studentName: name,
+                level: "第" + levelId + "關", bookName: bookName,
+                task1: task1, task2: task2, task3: task3,
+                fileName: fileName, fileMimeType: fileMimeType, fileData: fileData
+            };
+            
+            try {
+                let res = await fetch(GAS_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify(payload)
+                });
+                
+                alert("任務已成功送達圖書館！請等待志工審核。");
+                localStorage.setItem('lv' + levelId + '_status', 'approved'); 
+                window.location.href = 'index.html';
+                
+            } catch(err) {
+                alert("傳送失敗！這可能是由於網路不穩或是學校帳號權限阻擋，請確認網路連線。");
+            } finally {
+                btn.innerText = oldText; btn.disabled = false;
+            }
+        }
+
+        let dynamicMin = 10; function updateReq() { dynamicMin = window.isHighReq ? 20 : 10; triggerDynamicCheck(); } function triggerDynamicCheck() { checkFixedWords('w-what', dynamicMin); checkFixedWords('w-why', dynamicMin); checkFixedWords('w-how', dynamicMin); } function checkFixedWords(id, limit) { let count = document.getElementById(id).value.replace(/\s+/g, '').length; let display = document.getElementById(id + '-count'); display.innerText = count < limit ? `至少需要 ${limit} 字，目前：${count} 字` : `目前：${count} 字 (達標 ✅)`; display.style.color = count < limit ? '#e74c3c' : '#27ae60'; return count >= limit; } async function submitForm(e) { e.preventDefault(); if (!checkFixedWords('theme-reason', 15) || !checkFixedWords('w-who', 2) || !checkFixedWords('w-when', 2) || !checkFixedWords('w-where', 2) || !checkFixedWords('w-what', dynamicMin) || !checkFixedWords('w-why', dynamicMin) || !checkFixedWords('w-how', dynamicMin)) { alert("還有欄位字數不足喔，請檢查紅字提示！"); return; } let bName = document.getElementById('b-name').value; let t = document.querySelector('input[name="t"]:checked').value; let tr = document.getElementById('theme-reason').value; let t1 = `主題：${t}\n理由：${tr}`; let t2 = `Who：${document.getElementById('w-who').value}\nWhen：${document.getElementById('w-when').value}\nWhere：${document.getElementById('w-where').value}`; let t3 = `What：${document.getElementById('w-what').value}\nWhy：${document.getElementById('w-why').value}\nHow：${document.getElementById('w-how').value}`; await sendData(e, 5, bName, t1, t2, t3, 'file-upload'); }
+    </script>
+</body>
+</html>

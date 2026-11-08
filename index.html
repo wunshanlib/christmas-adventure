@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考後閱讀趣 智慧集點GO! - 奇幻聖誕村閱讀大冒險</title>
+    <style>
+        body { margin: 0; font-family: "微軟正黑體", sans-serif; background: linear-gradient(to bottom, #111a2d, #1e3a5f); color: white; text-align: center; min-height: 100vh; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background-color: rgba(17, 26, 45, 0.9); border-bottom: 2px solid #f39c12; }
+        .header-title { font-size: 18px; font-weight: bold; color: #f39c12; }
+        .header-status { font-size: 16px; color: #ecf0f1; display: flex; gap: 15px; align-items: center;}
+        
+        .map-wrapper { 
+            margin: 20px auto; width: 95%; max-width: 1400px; 
+            background-image: url('./bg-map.png'); 
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
+            aspect-ratio: 16 / 9; 
+            position: relative; overflow: hidden; border: 4px solid #f39c12; 
+            background-color: #1e3a5f; 
+        }
+        
+        .glass-card { 
+            position: absolute; 
+            background: rgba(20, 30, 50, 0.65); 
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px);
+            border: 2px solid #f1c40f; 
+            border-radius: 16px; 
+            padding: 12px 18px;
+            color: white; 
+            text-decoration: none; 
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 220px;
+            transition: all 0.3s ease; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            z-index: 10;
+            text-align: left;
+        }
+        
+        .glass-card:hover { 
+            transform: scale(1.05) translateY(-5px); 
+            border-color: #f39c12; 
+            background: rgba(20, 30, 50, 0.85); 
+            box-shadow: 0 12px 25px rgba(241, 196, 15, 0.3);
+        }
+        
+        .card-header { display: flex; align-items: center; gap: 12px; }
+        .node-num { 
+            background: #f1c40f; color: #000; font-weight: 900; 
+            width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; 
+            border-radius: 50%; font-size: 16px; box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3);
+        }
+        .node-title { font-size: 20px; font-weight: bold; letter-spacing: 1px; color: #fff; margin: 0;}
+        .node-subtitle { font-size: 12px; color: #ecf0f1; border-bottom: 1px dashed rgba(255,255,255,0.3); padding-bottom: 10px; margin: 0; }
+        
+        .card-footer { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: bold; }
+        .status-pill { background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 12px; color: #e67e22; border: 1px solid #e67e22; transition: 0.3s;}
+        .points { color: #f1c40f; }
+
+        .completed { border-color: #2ecc71 !important; box-shadow: 0 0 15px rgba(46,204,113,0.3); pointer-events: none;}
+        .completed .status-pill { background: #27ae60 !important; color: white !important; border-color: #2ecc71 !important; }
+
+        #btn-lv1 { left: 10%; top: 22%; }
+        #btn-lv2 { left: 8%; bottom: 15%; }
+        #btn-lv3 { left: 38%; top: 40%; }
+        #btn-lv4 { right: 8%; bottom: 15%; }
+        #btn-lv5 { right: 10%; top: 15%; }
+        
+        .marquee-container { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.7); padding: 10px 0; font-size: 14px; color: #f1c40f; letter-spacing: 1px; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); }
+        .modal-content { background-color: transparent; margin: 5% auto; width: 80%; max-width: 500px; text-align: center; position: relative; }
+        .modal-content img { width: 100%; max-width: 400px; height: auto; border-radius: 15px; animation: popIn 0.5s ease-out; }
+        
+        .login-box { background: #f4f8f4; border-radius: 20px; padding: 30px; width: 90%; max-width: 400px; margin: 10% auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: left; position: relative; border: 4px solid #27ae60; color: #333;}
+        .login-box h3 { text-align: center; color: #2c3e50; margin-top: 0; margin-bottom: 20px; font-size: 18px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; color: #1e5631; margin-bottom: 5px; font-size: 15px; }
+        .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        .login-btn { width: 100%; background: linear-gradient(to right, #e74c3c, #c0392b); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .login-btn:hover { background: linear-gradient(to right, #c0392b, #a53125); }
+        .close-btn { background: #e74c3c; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold; }
+        .close-btn:hover { background: #c0392b; }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .map-wrapper { height: auto; min-height: 1200px; aspect-ratio: auto; overflow-y: auto; background-size: cover; background-position: top center; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 50px 0;}
+            .glass-card { position: relative; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; margin: 15px auto; width: 85%; }
+            .marquee-container { position: relative; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginModal" class="modal" style="display:block; background-color:rgba(17,26,45,0.95);">
+        <div class="login-box">
+            <h3>搭上聖誕班機，展開閱讀環遊世界！</h3>
+            <div class="form-group">
+                <label>班級</label>
+                <select id="login-class">
+                    <option value="">請選擇班級</option>
+                    <option value="101">一年1班</option><option value="102">一年2班</option>
+                    <option value="201">二年1班</option><option value="202">二年2班</option>
+                    <option value="301">三年1班</option><option value="302">三年2班</option>
+                    <option value="401">四年1班</option><option value="402">四年2班</option><option value="403">四年3班</option>
+                    <option value="501">五年1班</option><option value="502">五年2班</option><option value="503">五年3班</option>
+                    <option value="601">六年1班</option><option value="602">六年2班</option><option value="603">六年3班</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>座號</label>
+                <select id="login-number">
+                    <option value="">請選擇座號</option>
+                    <script>
+                        for(let i=1; i<=30; i++) {
+                            document.write(`<option value="${i}">${i}號</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>姓名</label>
+                <input type="text" id="login-name" placeholder="請輸入完整中文姓名...">
+            </div>
+            <button class="login-btn" onclick="processLogin()">✈️ 登機開始探索！</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-title">文山國小圖書館｜考後閱讀趣 智慧集點GO!</div>
+        <div class="header-status">
+            <span id="user-info" style="margin-right: 15px; color: #2ecc71; font-weight: bold;"></span>
+            <span>累積點數：<strong id="total-points" style="color:#f1c40f; font-size:20px;">0</strong> 點</span>
+            <button onclick="resetData()" style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">登出/重設</button>
+        </div>
+    </header>
+    
+    <div class="map-wrapper">
+        <a href="level1.html" class="glass-card" id="btn-lv1">
+            <div class="card-header"><div class="node-num">01</div><h3 class="node-title">封面藏玄機</h3></div>
+            <p class="node-subtitle">UA 烏克蘭聖誕蜘蛛 - 封面預測</p>
+            <div class="card-footer"><span class="status-pill" id="pill-1">未完成</span><span class="points">1 點</span></div>
+        </a>
+        <a href="level2.html" class="glass-card" id="btn-lv2">
+            <div class="card-header"><div class="node-num">02</div><h3 class="node-title">新書嘗鮮趣</h3></div>
+            <p class="node-subtitle">IS 冰島聖誕精靈 - 新書探索</p>
+            <div class="card-footer"><span class="status-pill" id="pill-2">未完成</span><span class="points">1 點</span></div>
+        </a>
+        <a href="level3.html" class="glass-card" id="btn-lv3">
+            <div class="card-header"><div class="node-num">03</div><h3 class="node-title">喜閱衝衝衝</h3></div>
+            <p class="node-subtitle">JP 日本聖誕炸雞 - 喜閱網認證</p>
+            <div class="card-footer"><span class="status-pill" id="pill-3">未完成</span><span class="points">2 點</span></div>
+        </a>
+        <a href="level4.html" class="glass-card" id="btn-lv4">
+            <div class="card-header"><div class="node-num">04</div><h3 class="node-title">好書放送站</h3></div>
+            <p class="node-subtitle">US 美國聖誕餅乾 - 好書推薦</p>
+            <div class="card-footer"><span class="status-pill" id="pill-4">未完成</span><span class="points">2 點</span></div>
+        </a>
+        <a href="level5.html" class="glass-card" id="btn-lv5">
+            <div class="card-header"><div class="node-num">05</div><h3 class="node-title">聖誕故事盒</h3></div>
+            <p class="node-subtitle">TW 臺灣交換禮物 - 故事解密</p>
+            <div class="card-footer"><span class="status-pill" id="pill-5">未完成</span><span class="points">2 點</span></div>
+        </a>
+        <div class="marquee-container">✨ 請直接點選地圖上的「01 ~ 05 站點卡片」展開挑戰，集滿點數可兌換專屬大獎！ ✨</div>
+    </div>
+
+    <div id="rewardModal" class="modal">
+        <div class="modal-content"><img id="rewardImg" src="" alt="Reward Badge"><br><button class="close-btn" onclick="closeModal()">收下獎勵 / 返回</button></div>
+    </div>
+
+    <script>
+        let totalPoints = 0;
+        
+        function processLogin() {
+            let cls = document.getElementById('login-class').value;
+            let num = document.getElementById('login-number').value;
+            let name = document.getElementById('login-name').value.trim();
+            if(!cls || !num || !name) { alert("請完整填寫班級、座號與姓名喔！"); return; }
+            let grade = cls.charAt(0);
+            localStorage.setItem('user_class', cls);
+            localStorage.setItem('user_num', num);
+            localStorage.setItem('user_name', name);
+            localStorage.setItem('student_grade', grade);
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('user-info').innerText = `👤 ${cls.charAt(0)}年${cls.charAt(2)}班 ${num}號 ${name}`;
+            checkProgress();
+        }
+
+        function completeCard(cardId, pillId, pointsToAdd) {
+            let card = document.getElementById(cardId);
+            if(card) {
+                card.classList.add('completed');
+                card.onclick = function(e){ e.preventDefault(); };
+            }
+            let pill = document.getElementById(pillId);
+            if(pill) pill.innerText = '✅ 已完成';
+            totalPoints += pointsToAdd;
+        }
+
+        function checkProgress() {
+            if(!localStorage.getItem('user_name')) { document.getElementById('loginModal').style.display = 'block'; return; } 
+            else {
+                document.getElementById('loginModal').style.display = 'none';
+                let cls = localStorage.getItem('user_class');
+                let info = document.getElementById('user-info');
+                if(info) info.innerText = `👤 ${cls.charAt(0)}年${cls.charAt(2)}班 ${localStorage.getItem('user_num')}號 ${localStorage.getItem('user_name')}`;
+            }
+            totalPoints = 0;
+            if(localStorage.getItem('lv1_status') === 'approved') completeCard('btn-lv1', 'pill-1', 1);
+            if(localStorage.getItem('lv2_status') === 'approved') completeCard('btn-lv2', 'pill-2', 1);
+            if(localStorage.getItem('lv3_status') === 'approved') completeCard('btn-lv3', 'pill-3', 2);
+            if(localStorage.getItem('lv4_status') === 'approved') completeCard('btn-lv4', 'pill-4', 2);
+            if(localStorage.getItem('lv5_status') === 'approved') completeCard('btn-lv5', 'pill-5', 2);
+            
+            let pts = document.getElementById('total-points');
+            if(pts) pts.innerText = totalPoints;
+
+            if(localStorage.getItem('lv1_status') === 'approved' && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png'); localStorage.setItem('lv1_badge_shown', 'true'); }
+            else if(localStorage.getItem('lv2_status') === 'approved' && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png'); localStorage.setItem('lv2_badge_shown', 'true'); }
+            else if(localStorage.getItem('lv3_status') === 'approved' && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png'); localStorage.setItem('lv3_badge_shown', 'true'); }
+            else if(localStorage.getItem('lv4_status') === 'approved' && localStorage.getItem('lv4_badge_shown') !== 'true') { showRewardModal('聖誕好書推薦員徽章-4.png'); localStorage.setItem('lv4_badge_shown', 'true'); }
+            else if(localStorage.getItem('lv5_status') === 'approved' && localStorage.getItem('lv5_badge_shown') !== 'true') { showRewardModal('聖誕故事解密閱讀徽章-5.png'); localStorage.setItem('lv5_badge_shown', 'true'); }
+            else if(totalPoints >= 4 && totalPoints < 8 && localStorage.getItem('reward_4_claimed') !== 'true') { showRewardModal('冬日閱讀徽章與過關證書.png'); localStorage.setItem('reward_4_claimed', 'true'); }
+            else if(totalPoints >= 8 && localStorage.getItem('reward_8_claimed') !== 'true') { showRewardModal('冬日閱讀徽章與過關證書.png'); localStorage.setItem('reward_8_claimed', 'true'); }
+        }
+        function showRewardModal(imageSrc) { document.getElementById('rewardImg').src = imageSrc; document.getElementById('rewardModal').style.display = 'block'; }
+        function closeModal() { document.getElementById('rewardModal').style.display = 'none'; checkProgress(); }
+        function resetData() { localStorage.clear(); location.reload(); }
+        window.onload = checkProgress;
+    </script>
+</body>
+</html>
