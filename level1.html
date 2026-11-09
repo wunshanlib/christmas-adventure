@@ -105,12 +105,21 @@
         function showMainForm() {
             let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
             if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
+            
+            if(localStorage.getItem('lv1_status') === 'approved') {
+                let btn = document.querySelector('.submit-btn');
+                if(btn) {
+                    btn.innerText = "本關卡任務已成功送出 ✅";
+                    btn.disabled = true;
+                    btn.style.background = "#95a5a6";
+                }
+            }
         }
         window.onload = function() { loadUserData(); if(localStorage.getItem('lv1_unlocked') === 'true') showMainForm(); };
         
         function playAudio(type) {
             let text = type === '烏克蘭' ? "在烏克蘭，有一個特別的聖誕傳說：一戶貧窮人家買不起聖誕樹裝飾，蜘蛛便在樹上織出美麗的網。傳說陽光照在蜘蛛網上，讓它閃閃發亮，像金銀絲一樣！因此，有些烏克蘭家庭會在聖誕樹上掛蜘蛛或蜘蛛網裝飾，象徵好運與祝福。原本不起眼的蜘蛛網，竟然成了充滿希望的聖誕寶物！" : "一本書的封面，就像一張神祕的藏寶圖！仔細看看封面上的人物、顏色、圖案和書名，你能找到哪些故事線索呢？快來當個封面偵探，猜猜書裡藏著什麼祕密！";
-            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 0.9;
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
@@ -129,6 +138,7 @@
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             submittedBooks.push(bookName);
             localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
+            localStorage.setItem('last_submission_time', new Date().toISOString());
         }
 
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {

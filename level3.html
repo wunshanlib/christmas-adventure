@@ -107,12 +107,21 @@
         function showMainForm() {
             let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
             if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
+            
+            if(localStorage.getItem('lv3_status') === 'approved') {
+                let btn = document.querySelector('.submit-btn');
+                if(btn) {
+                    btn.innerText = "本關卡任務已成功送出 ✅";
+                    btn.disabled = true;
+                    btn.style.background = "#95a5a6";
+                }
+            }
         }
         window.onload = function() { loadUserData(); if(localStorage.getItem('lv3_unlocked') === 'true') showMainForm(); };
         
         function playAudio(type) {
             let text = type === '日本' ? "你知道嗎？在日本，聖誕節吃肯德基炸雞，是許多人喜愛的過節方式！1974年，肯德基推出聖誕節廣告，邀請大家用炸雞慶祝佳節。沒想到大受歡迎，逐漸形成特別的節慶習慣。現在，有些家庭會提前預訂炸雞套餐，搭配聖誕蛋糕，與親友共享美食。原來，商業廣告也可能創造新的節慶文化！" : "聖誕村的閱讀星星正在等待勇敢的挑戰者！讀一本書，到喜閱網完成閱讀測驗，再把成功過關的證明帶回聖誕村，就能點亮你的閱讀星星！";
-            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 0.9;
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
@@ -131,6 +140,7 @@
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             submittedBooks.push(bookName);
             localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
+            localStorage.setItem('last_submission_time', new Date().toISOString());
         }
 
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {

@@ -105,12 +105,21 @@
         function showMainForm() {
             let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
             if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
+            
+            if(localStorage.getItem('lv4_status') === 'approved') {
+                let btn = document.querySelector('.submit-btn');
+                if(btn) {
+                    btn.innerText = "本關卡任務已成功送出 ✅";
+                    btn.disabled = true;
+                    btn.style.background = "#95a5a6";
+                }
+            }
         }
         window.onload = function() { loadUserData(); if(localStorage.getItem('lv4_unlocked') === 'true') showMainForm(); };
         
         function playAudio(type) {
             let text = type === '美國' ? "美國有些家庭在平安夜，會準備一盤餅乾和一杯牛奶，放在聖誕樹旁或壁爐附近。為什麼呢？因為傳說聖誕老人要在夜裡忙著送禮物，孩子想準備點心，感謝他的辛苦。有些孩子還會寫一張感謝卡，甚至替馴鹿準備紅蘿蔔！這個溫暖的習俗，不只是期待收到禮物，也提醒大家學會感謝與分享。" : "好書就像一份珍貴的禮物，分享出去，就能讓更多人感受到閱讀的快樂！請選一本你真正喜歡的書，告訴其他小朋友為什麼值得閱讀。";
-            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 0.9;
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
@@ -129,6 +138,7 @@
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             submittedBooks.push(bookName);
             localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
+            localStorage.setItem('last_submission_time', new Date().toISOString());
         }
 
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {

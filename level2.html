@@ -105,12 +105,21 @@
         function showMainForm() {
             let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
             if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
+            
+            if(localStorage.getItem('lv2_status') === 'approved') {
+                let btn = document.querySelector('.submit-btn');
+                if(btn) {
+                    btn.innerText = "本關卡任務已成功送出 ✅";
+                    btn.disabled = true;
+                    btn.style.background = "#95a5a6";
+                }
+            }
         }
         window.onload = function() { loadUserData(); if(localStorage.getItem('lv2_unlocked') === 'true') showMainForm(); };
         
         function playAudio(type) {
             let text = type === '冰島' ? "冰島的聖誕節可熱鬧了！傳說有13位調皮的「聖誕小子」，會在聖誕節前13天，一天來一位。有的愛偷香腸，有的喜歡舔湯匙，還有的愛亂關門！孩子們會把鞋子放在窗臺上，期待隔天收到小禮物。傳說乖巧的孩子可能得到糖果，調皮的孩子則可能收到馬鈴薯。這13位小精靈，讓冰島的聖誕節充滿驚喜！" : "新書到站啦！每一本新書都是一扇通往奇妙世界的大門。快從圖書館的新書中選一本，讀完後把最讓你驚喜、感動或好奇的地方分享出來！";
-            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 0.9;
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
@@ -129,6 +138,7 @@
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             submittedBooks.push(bookName);
             localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
+            localStorage.setItem('last_submission_time', new Date().toISOString());
         }
 
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {

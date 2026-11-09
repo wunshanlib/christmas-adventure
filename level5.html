@@ -105,12 +105,21 @@
         function showMainForm() {
             let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
             if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
+            
+            if(localStorage.getItem('lv5_status') === 'approved') {
+                let btn = document.querySelector('.submit-btn');
+                if(btn) {
+                    btn.innerText = "本關卡任務已成功送出 ✅";
+                    btn.disabled = true;
+                    btn.style.background = "#95a5a6";
+                }
+            }
         }
         window.onload = function() { loadUserData(); if(localStorage.getItem('lv5_unlocked') === 'true') showMainForm(); };
         
         function playAudio(type) {
             let text = type === '臺灣' ? "在臺灣，聖誕節雖然不是國定假日，但有些學校、公司和朋友會舉辦交換禮物活動。大家先準備一份包裝好的禮物，再透過抽籤或遊戲，交換彼此的驚喜。有時候，收到的禮物不是自己最想要的，卻可能發現意想不到的樂趣！交換禮物最重要的不是價錢，而是用心準備、尊重別人的心意，分享節日的快樂。" : "恭喜來到神祕的聖誕故事盒！聖誕故事裡，除了禮物和聖誕老人，還藏著友情、勇氣、感恩與希望。快打開一本聖誕主題書，找出故事真正想告訴我們的祕密！";
-            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 0.9;
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
@@ -129,6 +138,7 @@
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             submittedBooks.push(bookName);
             localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
+            localStorage.setItem('last_submission_time', new Date().toISOString());
         }
 
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
