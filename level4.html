@@ -17,7 +17,6 @@
         .audio-btn { flex-shrink: 0; background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
         
-        /* 圖片外框終極修復：確保不切邊且不失真縮放 */
         .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
         .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
         
@@ -76,7 +75,7 @@
                 <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
                 <div><strong>任務已解鎖！</strong><br>好書就像一份珍貴的禮物，分享出去，就能讓更多人感受到閱讀的快樂！請選一本你真正喜歡的書，告訴其他小朋友為什麼值得閱讀。</div>
             </div>
-            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名</label><input type="text" id="b-name" placeholder="請輸入你要推薦的書名..." required></div><div class="form-group"><label>🎯 推薦特色 (請勾選 2 到 5 項)</label><div class="checkbox-group" id="features"><label><input type="checkbox" class="fc" value="故事有趣又好笑"> 故事有趣又好笑</label><label><input type="checkbox" class="fc" value="插圖精美又吸引人"> 插圖精美又吸引人</label><label><input type="checkbox" class="fc" value="故事充滿驚喜"> 故事充滿驚喜</label><label><input type="checkbox" class="fc" value="主角勇敢不放棄"> 主角勇敢不放棄</label><label><input type="checkbox" class="fc" value="讓我學到新知識"> 讓我學到新知識</label><label><input type="checkbox" class="fc" value="讓我感動又溫暖"> 讓我感動又溫暖</label><label><input type="checkbox" class="fc" value="讓我學會思考問題"> 讓我學會思考問題</label><label><input type="checkbox" class="fc" value="讓我想一讀再讀"> 讓我想一讀再讀</label></div></div><div class="form-group"><label>👦 適合閱讀年級</label><select id="suit" required><option value="">請選擇...</option><option value="一年級">一年級</option><option value="二年級">二年級</option><option value="三年級">三年級</option><option value="四年級">四年級</option><option value="五年級">五年級</option><option value="六年級">六年級</option></select></div><div class="form-group"><label>📝 詳細推薦理由</label><textarea id="reason" placeholder="請寫下這本書最精彩、最推薦的地方..." oninput="checkWords('reason')" required></textarea><div id="reason-count" class="word-count">至少 30 字</div></div><div class="form-group"><label>📸 書籍照片 (選填)</label><input type="file" id="file-upload" accept="image/*"></div><button type="submit" class="submit-btn">送出推薦，等待志工審核</button></form>
+            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名</label><input type="text" id="b-name" placeholder="請輸入你要推薦的書名..." required></div><div class="form-group"><label>🎯 推薦特色 (請勾選 2 到 5 項)</label><div class="checkbox-group" id="features"><label><input type="checkbox" class="fc" value="故事有趣又好笑"> 故事有趣又好笑</label><label><input type="checkbox" class="fc" value="插圖精美又吸引人"> 插圖精美又吸引人</label><label><input type="checkbox" class="fc" value="故事充滿驚喜"> 故事充滿驚喜</label><label><input type="checkbox" class="fc" value="主角勇敢不放棄"> 主角勇敢不放棄</label><label><input type="checkbox" class="fc" value="讓我學到新知識"> 讓我學到新知識</label><label><input type="checkbox" class="fc" value="讓我感動又溫暖"> 讓我感動又溫暖</label><label><input type="checkbox" class="fc" value="讓我學會思考問題"> 讓我學會思考問題</label><label><input type="checkbox" class="fc" value="讓我想一讀再讀"> 讓我想一讀再讀</label></div></div><div class="form-group"><label>👦 適合閱讀年級</label><select id="suit" required><option value="">請選擇...</option><option value="低年級">低年級</option><option value="中年級">中年級</option><option value="高年級">高年級</option></select></div><div class="form-group"><label>📝 詳細推薦理由</label><textarea id="reason" placeholder="請寫下這本書最精彩、最推薦的地方..." oninput="checkWords('reason')" required></textarea><div id="reason-count" class="word-count">至少 30 字</div></div><div class="form-group"><label>📸 書籍照片 (選填)</label><input type="file" id="file-upload" accept="image/*"></div><button type="submit" class="submit-btn">送出推薦，等待志工審核</button></form>
         </div>
     </div>
     <script>
@@ -117,8 +116,28 @@
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
         }
 
+        // 防止重複送出功能 (由同一個學生輸入相同的書名)
+        function checkDuplicateSubmission(levelId, bookName) {
+            let submittedKey = 'submitted_books_lv' + levelId;
+            let submittedBooks = JSON.parse(localStorage.getItem(submittedKey) || '[]');
+            if(submittedBooks.includes(bookName)) {
+                alert(`⚠️ 你已經送交過「${bookName}」這本書囉！請換一本新的書來挑戰。`);
+                return true; // 是重複的
+            }
+            return false; // 不是重複的
+        }
+
+        function saveSubmission(levelId, bookName) {
+            let submittedKey = 'submitted_books_lv' + levelId;
+            let submittedBooks = JSON.parse(localStorage.getItem(submittedKey) || '[]');
+            submittedBooks.push(bookName);
+            localStorage.setItem(submittedKey, JSON.stringify(submittedBooks));
+        }
+
         // --- 強制 JSON 傳送模組 ---
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
+            if(checkDuplicateSubmission(levelId, bookName)) return; // 防呆：阻擋重複書名
+
             let cls = localStorage.getItem('user_class') || "";
             let num = localStorage.getItem('user_num') || "";
             let name = localStorage.getItem('user_name') || "";
@@ -157,6 +176,7 @@
                     body: JSON.stringify(payload)
                 });
                 
+                saveSubmission(levelId, bookName); // 成功送出後紀錄書名
                 alert("任務已成功送達圖書館！請等待志工審核。");
                 localStorage.setItem('lv' + levelId + '_status', 'approved'); 
                 window.location.href = 'index.html';

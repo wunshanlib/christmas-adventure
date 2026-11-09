@@ -17,7 +17,6 @@
         .audio-btn { flex-shrink: 0; background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
         
-        /* 圖片外框終極修復：確保不切邊且不失真縮放 */
         .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
         .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
         
@@ -76,7 +75,7 @@
                 <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
                 <div><strong>任務已解鎖！</strong><br>一本書的封面，就像一張神祕的藏寶圖！仔細看看封面上的人物、顏色、圖案和書名，你能找到哪些故事線索呢？快來當個封面偵探，猜猜書裡藏著什麼祕密！</div>
             </div>
-            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名 (必填)</label><input type="text" id="b-name" placeholder="請輸入書本完整的書名..." required></div><div class="form-group"><label>👀 我看到的封面線索</label><textarea id="clues" placeholder="請詳細描述你在封面上看到的人物、物品或特殊圖案..." oninput="checkWords('clues')" required></textarea><div id="clues-count" class="word-count">至少需要 10 字</div></div><div class="form-group"><label>🤔 我猜故事可能是……</label><textarea id="guess" placeholder="根據這些線索，你覺得這本書在講什麼樣的故事呢？" oninput="checkWords('guess')" required></textarea><div id="guess-count" class="word-count">至少需要 10 字</div></div><div class="form-group"><label>📸 上傳封面照片或合照 (必填)</label><input type="file" id="file-upload" accept="image/*" required></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
+            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名 (必填)</label><input type="text" id="b-name" placeholder="請輸入書本完整的書名 (提醒：請使用新書)" required></div><div class="form-group"><label>👀 我看到的封面線索</label><textarea id="clues" placeholder="請詳細描述你在封面上看到的人物、物品或特殊圖案..." oninput="checkWords('clues')" required></textarea><div id="clues-count" class="word-count">至少需要 10 字</div></div><div class="form-group"><label>🤔 我猜故事可能是……</label><textarea id="guess" placeholder="根據這些線索，你覺得這本書在講什麼樣的故事呢？" oninput="checkWords('guess')" required></textarea><div id="guess-count" class="word-count">至少需要 10 字</div></div><div class="form-group"><label>📸 上傳封面照片或合照 (必填)</label><input type="file" id="file-upload" accept="image/*" required></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
         </div>
     </div>
     <script>
@@ -117,8 +116,28 @@
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
         }
 
+        // 防止重複送出功能 (由同一個學生輸入相同的書名)
+        function checkDuplicateSubmission(levelId, bookName) {
+            let submittedKey = 'submitted_books_lv' + levelId;
+            let submittedBooks = JSON.parse(localStorage.getItem(submittedKey) || '[]');
+            if(submittedBooks.includes(bookName)) {
+                alert(`⚠️ 你已經送交過「${bookName}」這本書囉！請換一本新的書來挑戰。`);
+                return true; // 是重複的
+            }
+            return false; // 不是重複的
+        }
+
+        function saveSubmission(levelId, bookName) {
+            let submittedKey = 'submitted_books_lv' + levelId;
+            let submittedBooks = JSON.parse(localStorage.getItem(submittedKey) || '[]');
+            submittedBooks.push(bookName);
+            localStorage.setItem(submittedKey, JSON.stringify(submittedBooks));
+        }
+
         // --- 強制 JSON 傳送模組 ---
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
+            if(checkDuplicateSubmission(levelId, bookName)) return; // 防呆：阻擋重複書名
+
             let cls = localStorage.getItem('user_class') || "";
             let num = localStorage.getItem('user_num') || "";
             let name = localStorage.getItem('user_name') || "";
@@ -157,6 +176,7 @@
                     body: JSON.stringify(payload)
                 });
                 
+                saveSubmission(levelId, bookName); // 成功送出後紀錄書名
                 alert("任務已成功送達圖書館！請等待志工審核。");
                 localStorage.setItem('lv' + levelId + '_status', 'approved'); 
                 window.location.href = 'index.html';

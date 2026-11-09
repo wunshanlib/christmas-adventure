@@ -173,7 +173,7 @@
         <div class="marquee-container">✨ 請直接點選地圖上的「01 ~ 05 站點卡片」展開挑戰，集滿點數可兌換專屬大獎！ ✨</div>
     </div>
 
-    <!-- 獎勵視窗 (加入拆禮物互動與音效) -->
+    <!-- 獎勵視窗 (加入拆禮物互動與豪華音效) -->
     <div id="rewardModal" class="modal">
         <div class="modal-content">
             <div id="gift-box-container" onclick="openGift()">
@@ -192,32 +192,38 @@
         let totalPoints = 0;
         let currentBadgeSrc = "";
         
-        // 播放歡樂音效 (使用 Web Audio API，無需外部音檔)
+        // 升級版豪華勝利音效 (歡樂升階和弦 + 撒花感)
         function playSuccessSound() {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (!AudioContext) return;
                 const ctx = new AudioContext();
                 
-                function playNote(freq, startTime, duration) {
+                function playNote(freq, startTime, duration, type='sine', vol=0.3) {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.value = freq;
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, startTime);
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     gain.gain.setValueAtTime(0, startTime);
-                    gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05);
+                    gain.gain.linearRampToValueAtTime(vol, startTime + 0.05);
                     gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
                     osc.start(startTime);
                     osc.stop(startTime + duration);
                 }
                 
                 let now = ctx.currentTime;
-                playNote(523.25, now, 0.2);       // C5
-                playNote(659.25, now + 0.15, 0.2); // E5
-                playNote(783.99, now + 0.3, 0.4);  // G5
-                playNote(1046.50, now + 0.45, 0.6); // C6
+                // 歡樂上行音階
+                playNote(523.25, now, 0.15, 'triangle', 0.2);       // C5
+                playNote(659.25, now + 0.12, 0.15, 'triangle', 0.2); // E5
+                playNote(783.99, now + 0.24, 0.15, 'triangle', 0.2); // G5
+                
+                // 勝利和弦
+                playNote(1046.50, now + 0.4, 0.8, 'sine', 0.3);      // C6
+                playNote(659.25,  now + 0.4, 0.8, 'sine', 0.2);      // E5
+                playNote(1318.51, now + 0.4, 0.8, 'triangle', 0.1);  // E6 (加點亮亮的聲音)
+                
             } catch(e) {
                 console.log("Audio play failed", e);
             }
@@ -267,14 +273,14 @@
             let pts = document.getElementById('total-points');
             if(pts) pts.innerText = totalPoints;
 
-            // 判斷是否需要顯示禮物盒
+            // 判斷是否需要顯示禮物盒 (修復：分開判斷 4 點與 8 點)
             if(localStorage.getItem('lv1_status') === 'approved' && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png', 'lv1_badge_shown'); }
             else if(localStorage.getItem('lv2_status') === 'approved' && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png', 'lv2_badge_shown'); }
             else if(localStorage.getItem('lv3_status') === 'approved' && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png', 'lv3_badge_shown'); }
             else if(localStorage.getItem('lv4_status') === 'approved' && localStorage.getItem('lv4_badge_shown') !== 'true') { showRewardModal('聖誕好書推薦員徽章-4.png', 'lv4_badge_shown'); }
             else if(localStorage.getItem('lv5_status') === 'approved' && localStorage.getItem('lv5_badge_shown') !== 'true') { showRewardModal('聖誕故事解密閱讀徽章-5.png', 'lv5_badge_shown'); }
-            else if(totalPoints >= 4 && totalPoints < 8 && localStorage.getItem('reward_4_claimed') !== 'true') { showRewardModal('冬日閱讀徽章與過關證書.png', 'reward_4_claimed'); }
-            else if(totalPoints >= 8 && localStorage.getItem('reward_8_claimed') !== 'true') { showRewardModal('冬日閱讀徽章與過關證書.png', 'reward_8_claimed'); }
+            else if(totalPoints >= 4 && totalPoints < 8 && localStorage.getItem('reward_4_claimed') !== 'true') { showRewardModal('4點-智慧水兌換徽章.png', 'reward_4_claimed'); }
+            else if(totalPoints >= 8 && localStorage.getItem('reward_8_claimed') !== 'true') { showRewardModal('8點-閱讀大冒險過關證書.png', 'reward_8_claimed'); }
         }
         
         let currentFlag = "";
