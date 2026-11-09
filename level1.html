@@ -116,7 +116,6 @@
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
         }
 
-        // 防止重複送出功能 (全域阻擋：跨關卡不能使用同一本書)
         function checkDuplicateSubmission(bookName) {
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             if(submittedBooks.includes(bookName)) {
@@ -132,9 +131,8 @@
             localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
         }
 
-        // --- 強制 JSON 傳送模組 ---
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
-            if(checkDuplicateSubmission(bookName)) return; // 防呆：阻擋跨關卡重複書名
+            if(checkDuplicateSubmission(bookName)) return;
 
             let cls = localStorage.getItem('user_class') || "";
             let num = localStorage.getItem('user_num') || "";
@@ -174,7 +172,7 @@
                     body: JSON.stringify(payload)
                 });
                 
-                saveSubmission(bookName); // 成功送出後紀錄書名
+                saveSubmission(bookName);
                 alert("任務已成功送達圖書館！請等待志工審核。");
                 localStorage.setItem('lv' + levelId + '_status', 'approved'); 
                 window.location.href = 'index.html';
