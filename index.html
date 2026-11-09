@@ -90,6 +90,16 @@
         #gift-box:hover { transform: scale(1.1); }
         .gift-hint { font-size: 20px; color: #f1c40f; font-weight: bold; margin-top: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
         
+        /* 闖關說明按鈕與視窗 */
+        .info-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-left: 10px; font-size: 14px;}
+        .info-btn:hover { background: #2980b9; }
+        
+        .info-content { background: #fff; padding: 25px; border-radius: 15px; width: 90%; max-width: 600px; margin: 5% auto; text-align: left; position: relative; color: #333; line-height: 1.6; border: 4px solid #3498db; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .info-content h2 { color: #2c3e50; border-bottom: 2px solid #f39c12; padding-bottom: 10px; margin-top: 0; text-align: center; }
+        .info-content h3 { color: #d35400; margin-top: 20px; margin-bottom: 10px; }
+        .info-content ul { padding-left: 20px; }
+        .info-content li { margin-bottom: 8px; }
+        
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes shake { 0% {transform: rotate(0deg);} 25% {transform: rotate(10deg);} 50% {transform: rotate(0deg);} 75% {transform: rotate(-10deg);} 100% {transform: rotate(0deg);} }
 
@@ -135,11 +145,44 @@
         </div>
     </div>
 
+    <!-- 闖關說明視窗 -->
+    <div id="infoModal" class="modal">
+        <div class="info-content">
+            <h2>📜 奇幻聖誕村 闖關說明</h2>
+            <p>歡迎來到奇幻聖誕村！這裡有五個不同的國家站點等待你來探索。完成閱讀任務，就能收集點數兌換獎勵喔！</p>
+            
+            <h3>🎯 闖關步驟</h3>
+            <ol>
+                <li>點擊地圖上的「01 ~ 05」卡片進入關卡。</li>
+                <li>閱讀該國的「聖誕文化報報」。</li>
+                <li>通過選擇題測驗，即可解鎖「閱讀任務」。</li>
+                <li>依照任務指示完成閱讀並填寫表單（注意字數與中文內容規定）。</li>
+                <li>送出任務後，等待圖書館志工審核。</li>
+            </ol>
+
+            <h3>⚠️ 重要規則</h3>
+            <ul>
+                <li><strong>每本書只能使用一次：</strong> 不同的關卡必須使用「不同的書」來挑戰。</li>
+                <li><strong>認真填寫：</strong> 任務表單有字數與中文字檢查，請不要亂打英文或數字敷衍了事喔！</li>
+            </ul>
+
+            <h3>🎁 獎勵辦法</h3>
+            <ul>
+                <li>集滿 <strong>4 點</strong>：可獲得「智慧水兌換徽章」（可至圖書館兌換智慧水）。</li>
+                <li>集滿 <strong>8 點</strong> (全數通關)：可獲得「閱讀大冒險過關證書」，並取得教務處參加抽獎的資格！</li>
+            </ul>
+            <div style="text-align: center;">
+                <button class="close-btn" onclick="closeInfoModal()">我瞭解了，開始闖關！</button>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="header-title">文山國小圖書館｜考後閱讀趣 智慧集點GO!</div>
         <div class="header-status">
             <span id="user-info" style="margin-right: 15px; color: #2ecc71; font-weight: bold;"></span>
             <span>累積點數：<strong id="total-points" style="color:#f1c40f; font-size:20px;">0</strong> 點</span>
+            <button class="info-btn" onclick="showInfoModal()">📄 闖關說明</button>
             <button onclick="resetData()" style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">登出/重設</button>
         </div>
     </header>
@@ -192,6 +235,9 @@
         let totalPoints = 0;
         let currentBadgeSrc = "";
         
+        function showInfoModal() { document.getElementById('infoModal').style.display = 'block'; }
+        function closeInfoModal() { document.getElementById('infoModal').style.display = 'none'; }
+        
         // 升級版豪華勝利音效 (歡樂升階和弦 + 撒花感)
         function playSuccessSound() {
             try {
@@ -241,6 +287,13 @@
             localStorage.setItem('student_grade', grade);
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('user-info').innerText = `👤 ${cls.charAt(0)}年${cls.charAt(2)}班 ${num}號 ${name}`;
+            
+            // 如果是第一次登入，顯示闖關說明
+            if(localStorage.getItem('info_shown') !== 'true') {
+                showInfoModal();
+                localStorage.setItem('info_shown', 'true');
+            }
+            
             checkProgress();
         }
 
@@ -273,7 +326,7 @@
             let pts = document.getElementById('total-points');
             if(pts) pts.innerText = totalPoints;
 
-            // 判斷是否需要顯示禮物盒 (分開判斷 4 點與 8 點)
+            // 判斷是否需要顯示禮物盒
             if(localStorage.getItem('lv1_status') === 'approved' && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png', 'lv1_badge_shown'); }
             else if(localStorage.getItem('lv2_status') === 'approved' && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png', 'lv2_badge_shown'); }
             else if(localStorage.getItem('lv3_status') === 'approved' && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png', 'lv3_badge_shown'); }
