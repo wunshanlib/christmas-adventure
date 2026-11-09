@@ -7,16 +7,17 @@
     <style>
         body { margin: 0; font-family: "微軟正黑體", sans-serif; background-color: #f4f1ea; color: #333; }
         header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; }
-        .back-btn { color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
+        .back-btn { white-space: nowrap; color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
         .main-container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .grade-banner { background: #162c4a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 15px; justify-content: center; font-size: 16px; }
         
         .culture-box { background: #fff8e1; border: 2px dashed #f39c12; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
         .culture-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .culture-header h3 { margin: 0; color: #d35400; font-size: 18px; }
-        .audio-btn { background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .audio-btn { flex-shrink: 0; background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
         
+        /* 圖片外框終極修復：確保不切邊且不失真縮放 */
         .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
         .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
         
@@ -33,6 +34,7 @@
         label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 16px; color: #2c3e50; }
         .hint { font-size: 13px; color: #7f8c8d; margin-bottom: 5px; }
         input[type="text"], input[type="date"], input[type="number"], select, textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        input::placeholder, textarea::placeholder { color: #95a5a6; font-style: italic; }
         textarea { height: 100px; resize: vertical; }
         .word-count { font-size: 13px; text-align: right; margin-top: 5px; font-weight: bold; color: #e67e22; }
         .submit-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
@@ -63,7 +65,7 @@
                 <img src="elf.jpg" alt="冰島文化">
             </div>
             
-            <p>冰島的聖誕節可熱鬧了！傳說有13位調皮的「聖誕小子」，會在聖誕節前13天，一天來一位。有的愛偷香腸，有的喜歡舔湯匙，還有的愛亂關門！孩子們會把鞋子放在窗臺上，期待隔天收到小禮物。傳說乖巧的孩子可能得到糖果，調皮的孩子則可能收到馬薯。這13位小精靈，讓冰島的聖誕節充滿驚喜！</p>
+            <p>冰島的聖誕節可熱鬧了！傳說有13位調皮的「聖誕小子」，會在聖誕節前13天，一天來一位。有的愛偷香腸，有的喜歡舔湯匙，還有的愛亂關門！孩子們會把鞋子放在窗臺上，期待隔天收到小禮物。傳說乖巧的孩子可能得到糖果，調皮的孩子則可能收到馬鈴薯。這13位小精靈，讓冰島的聖誕節充滿驚喜！</p>
             
             <div class="quiz-area" id="quiz-low"><strong>💡 任務解鎖測驗 (低年級)：</strong><br><br>冰島傳說中有幾位聖誕小精靈？<br><br><button class="quiz-btn" onclick="checkQuiz(false)">A. 3位</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 7位</button><button class="quiz-btn" onclick="checkQuiz(true)">C. 13位</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 20位</button></div>
             <div class="quiz-area" id="quiz-mid"><strong>💡 任務解鎖測驗 (中年級)：</strong><br><br>為什麼冰島孩子會把鞋子放在窗臺上？<br><br><button class="quiz-btn" onclick="checkQuiz(true)">A. 希望收到聖誕小精靈送的小禮物</button><button class="quiz-btn" onclick="checkQuiz(false)">B. 想讓鞋子變乾淨</button><button class="quiz-btn" onclick="checkQuiz(false)">C. 想把鞋子送給別人</button><button class="quiz-btn" onclick="checkQuiz(false)">D. 希望鞋子變大</button></div>
@@ -74,7 +76,7 @@
                 <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
                 <div><strong>任務已解鎖！</strong><br>新書到站啦！每一本新書都是一扇通往奇妙世界的大門。快從圖書館的新書中選一本，讀完後把最讓你驚喜、感動或好奇的地方分享出來！</div>
             </div>
-            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 新書書名 (沒貼書架號碼標籤的)</label><input type="text" id="b-name" required></div><div class="form-group"><label>✨ 最有印象的內容</label><textarea id="impress" oninput="checkWords('impress')" required></textarea><div id="impress-count" class="word-count">至少 15 字</div></div><div class="form-group"><label>💭 我的閱讀感想</label><textarea id="thoughts" oninput="checkWords('thoughts')" required></textarea><div id="thoughts-count" class="word-count">至少 15 字</div></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
+            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 新書書名 (沒貼書架號碼標籤的)</label><input type="text" id="b-name" placeholder="請輸入新書書名 (提醒：沒有貼書架號碼標籤的就是新書喔！)" required></div><div class="form-group"><label>✨ 最有印象的內容</label><textarea id="impress" placeholder="請分享這本書中讓你最驚喜或最好奇的段落..." oninput="checkWords('impress')" required></textarea><div id="impress-count" class="word-count">至少 15 字</div></div><div class="form-group"><label>💭 我的閱讀感想</label><textarea id="thoughts" placeholder="讀完這本新書，你有什麼特別的想法呢？" oninput="checkWords('thoughts')" required></textarea><div id="thoughts-count" class="word-count">至少 15 字</div></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
         </div>
     </div>
     <script>
@@ -108,7 +110,7 @@
         window.onload = function() { loadUserData(); if(localStorage.getItem('lv2_unlocked') === 'true') showMainForm(); };
         
         function playAudio(type) {
-            let text = type === '冰島' ? "冰島的聖誕節可熱鬧了！傳說有13位調皮的「聖誕小子」，會在聖誕節前13天，一天來一位。有的愛偷香腸，有的喜歡舔湯匙，還有的愛亂關門！孩子們會把鞋子放在窗臺上，期待隔天收到小禮物。傳說乖巧的孩子可能得到糖果，調皮的孩子則可能收到馬薯。這13位小精靈，讓冰島的聖誕節充滿驚喜！" : "新書到站啦！每一本新書都是一扇通往奇妙世界的大門。快從圖書館的新書中選一本，讀完後把最讓你驚喜、感動或好奇的地方分享出來！";
+            let text = type === '冰島' ? "冰島的聖誕節可熱鬧了！傳說有13位調皮的「聖誕小子」，會在聖誕節前13天，一天來一位。有的愛偷香腸，有的喜歡舔湯匙，還有的愛亂關門！孩子們會把鞋子放在窗臺上，期待隔天收到小禮物。傳說乖巧的孩子可能得到糖果，調皮的孩子則可能收到馬鈴薯。這13位小精靈，讓冰島的聖誕節充滿驚喜！" : "新書到站啦！每一本新書都是一扇通往奇妙世界的大門。快從圖書館的新書中選一本，讀完後把最讓你驚喜、感動或好奇的地方分享出來！";
             let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
@@ -166,7 +168,7 @@
             }
         }
 
-        let minW = 15; function updateReq() { minW = window.isHighReq ? 30 : 15; checkWords('impress'); checkWords('thoughts'); } function checkWords(id) { let count = document.getElementById(id).value.replace(/\s+/g, '').length; let display = document.getElementById(id + '-count'); display.innerText = count < minW ? `至少需要 ${minW} 字，目前：${count} 字` : `目前：${count} 字 (達標 ✅)`; display.style.color = count < minW ? '#e74c3c' : '#27ae60'; return count >= minW; } async function submitForm(e) { e.preventDefault(); if(!checkWords('impress') || !checkWords('thoughts')) { alert(`字數不足 ${minW} 字！`); return; } let bName = document.getElementById('b-name').value; let t1 = "深刻內容：\n" + document.getElementById('impress').value; let t2 = "閱讀感想：\n" + document.getElementById('thoughts').value; await sendData(e, 2, bName, t1, t2, "", null); }
+        let minW = 15; function updateReq() { minW = window.isHighReq ? 30 : 15; checkWords('impress'); checkWords('thoughts'); } function checkWords(id) { let el = document.getElementById(id); if(!el) return true; let text = el.value; let count = text.replace(/\s+/g, '').length; let zhCount = (text.match(/[\u4e00-\u9fa5]/g) || []).length; let display = document.getElementById(id + '-count'); if (count < minW) { display.innerText = `至少需要 ${minW} 字，目前：${count} 字`; display.style.color = '#e74c3c'; return false; } else if (zhCount < Math.floor(minW * 0.4)) { display.innerText = `請認真填寫中文心得喔！(不可亂打數字英文)`; display.style.color = '#e74c3c'; return false; } else { display.innerText = `目前：${count} 字 (達標 ✅)`; display.style.color = '#27ae60'; return true; } } async function submitForm(e) { e.preventDefault(); if(!checkWords('impress') || !checkWords('thoughts')) { alert(`字數不足或未包含足夠中文，請認真填寫喔！`); return; } let bName = document.getElementById('b-name').value; let t1 = "深刻內容：\n" + document.getElementById('impress').value; let t2 = "閱讀感想：\n" + document.getElementById('thoughts').value; await sendData(e, 2, bName, t1, t2, "", null); }
     </script>
 </body>
 </html>

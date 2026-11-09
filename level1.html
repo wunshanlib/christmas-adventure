@@ -7,16 +7,17 @@
     <style>
         body { margin: 0; font-family: "微軟正黑體", sans-serif; background-color: #f4f1ea; color: #333; }
         header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; }
-        .back-btn { color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
+        .back-btn { white-space: nowrap; color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
         .main-container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .grade-banner { background: #162c4a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 15px; justify-content: center; font-size: 16px; }
         
         .culture-box { background: #fff8e1; border: 2px dashed #f39c12; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
         .culture-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .culture-header h3 { margin: 0; color: #d35400; font-size: 18px; }
-        .audio-btn { background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .audio-btn { flex-shrink: 0; background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
         
+        /* 圖片外框終極修復：確保不切邊且不失真縮放 */
         .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
         .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
         
@@ -33,6 +34,7 @@
         label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 16px; color: #2c3e50; }
         .hint { font-size: 13px; color: #7f8c8d; margin-bottom: 5px; }
         input[type="text"], input[type="date"], input[type="number"], select, textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        input::placeholder, textarea::placeholder { color: #95a5a6; font-style: italic; }
         textarea { height: 100px; resize: vertical; }
         .word-count { font-size: 13px; text-align: right; margin-top: 5px; font-weight: bold; color: #e67e22; }
         .submit-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
@@ -74,7 +76,7 @@
                 <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
                 <div><strong>任務已解鎖！</strong><br>一本書的封面，就像一張神祕的藏寶圖！仔細看看封面上的人物、顏色、圖案和書名，你能找到哪些故事線索呢？快來當個封面偵探，猜猜書裡藏著什麼祕密！</div>
             </div>
-            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名 (必填)</label><input type="text" id="b-name" required></div><div class="form-group"><label>👀 我看到的封面線索</label><textarea id="clues" oninput="checkWords('clues')" required></textarea><div id="clues-count" class="word-count">至少需要 10 字</div></div><div class="form-group"><label>🤔 我猜故事可能是……</label><textarea id="guess" oninput="checkWords('guess')" required></textarea><div id="guess-count" class="word-count">至少需要 10 字</div></div><div class="form-group"><label>📸 上傳封面照片或合照 (必填)</label><input type="file" id="file-upload" accept="image/*" required></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
+            <form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名 (必填)</label><input type="text" id="b-name" placeholder="請輸入書本完整的書名..." required></div><div class="form-group"><label>👀 我看到的封面線索</label><textarea id="clues" placeholder="請詳細描述你在封面上看到的人物、物品或特殊圖案..." oninput="checkWords('clues')" required></textarea><div id="clues-count" class="word-count">至少需要 10 字</div></div><div class="form-group"><label>🤔 我猜故事可能是……</label><textarea id="guess" placeholder="根據這些線索，你覺得這本書在講什麼樣的故事呢？" oninput="checkWords('guess')" required></textarea><div id="guess-count" class="word-count">至少需要 10 字</div></div><div class="form-group"><label>📸 上傳封面照片或合照 (必填)</label><input type="file" id="file-upload" accept="image/*" required></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
         </div>
     </div>
     <script>
@@ -166,7 +168,7 @@
             }
         }
 
-        let minW = 10; function updateReq() { minW = window.isHighReq ? 20 : 10; checkWords('clues'); checkWords('guess'); } function checkWords(id) { let count = document.getElementById(id).value.replace(/\s+/g, '').length; let display = document.getElementById(id + '-count'); display.innerText = count < minW ? `至少需要 ${minW} 字，目前：${count} 字` : `目前：${count} 字 (達標 ✅)`; display.style.color = count < minW ? '#e74c3c' : '#27ae60'; return count >= minW; } async function submitForm(e) { e.preventDefault(); if(!checkWords('clues') || !checkWords('guess')) { alert(`字數不足 ${minW} 字！`); return; } let bName = document.getElementById('b-name').value; let t1 = "封面線索：\n" + document.getElementById('clues').value; let t2 = "故事猜測：\n" + document.getElementById('guess').value; await sendData(e, 1, bName, t1, t2, "", 'file-upload'); }
+        let minW = 10; function updateReq() { minW = window.isHighReq ? 20 : 10; checkWords('clues'); checkWords('guess'); } function checkWords(id) { let el = document.getElementById(id); if(!el) return true; let text = el.value; let count = text.replace(/\s+/g, '').length; let zhCount = (text.match(/[\u4e00-\u9fa5]/g) || []).length; let display = document.getElementById(id + '-count'); if (count < minW) { display.innerText = `至少需要 ${minW} 字，目前：${count} 字`; display.style.color = '#e74c3c'; return false; } else if (zhCount < Math.floor(minW * 0.4)) { display.innerText = `請認真填寫中文心得喔！(不可亂打數字英文)`; display.style.color = '#e74c3c'; return false; } else { display.innerText = `目前：${count} 字 (達標 ✅)`; display.style.color = '#27ae60'; return true; } } async function submitForm(e) { e.preventDefault(); if(!checkWords('clues') || !checkWords('guess')) { alert(`字數不足或未包含足夠中文，請認真填寫喔！`); return; } let bName = document.getElementById('b-name').value; let t1 = "封面線索：\n" + document.getElementById('clues').value; let t2 = "故事猜測：\n" + document.getElementById('guess').value; await sendData(e, 1, bName, t1, t2, "", 'file-upload'); }
     </script>
 </body>
 </html>

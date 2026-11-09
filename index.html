@@ -84,7 +84,14 @@
         .login-btn:hover { background: linear-gradient(to right, #c0392b, #a53125); }
         .close-btn { background: #e74c3c; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold; }
         .close-btn:hover { background: #c0392b; }
+        
+        /* 拆禮物互動特效 */
+        #gift-box { font-size: 120px; cursor: pointer; animation: shake 1.5s infinite; transition: 0.3s; margin: 40px auto; }
+        #gift-box:hover { transform: scale(1.1); }
+        .gift-hint { font-size: 20px; color: #f1c40f; font-weight: bold; margin-top: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
+        
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shake { 0% {transform: rotate(0deg);} 25% {transform: rotate(10deg);} 50% {transform: rotate(0deg);} 75% {transform: rotate(-10deg);} 100% {transform: rotate(0deg);} }
 
         @media (max-width: 768px) {
             .map-wrapper { height: auto; min-height: 1200px; aspect-ratio: auto; overflow-y: auto; background-size: cover; background-position: top center; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 50px 0;}
@@ -166,12 +173,55 @@
         <div class="marquee-container">✨ 請直接點選地圖上的「01 ~ 05 站點卡片」展開挑戰，集滿點數可兌換專屬大獎！ ✨</div>
     </div>
 
+    <!-- 獎勵視窗 (加入拆禮物互動與音效) -->
     <div id="rewardModal" class="modal">
-        <div class="modal-content"><img id="rewardImg" src="" alt="Reward Badge"><br><button class="close-btn" onclick="closeModal()">收下獎勵 / 返回</button></div>
+        <div class="modal-content">
+            <div id="gift-box-container" onclick="openGift()">
+                <div id="gift-box">🎁</div>
+                <div class="gift-hint">你獲得了新徽章，點擊拆開禮物！</div>
+            </div>
+            <div id="badge-display" style="display:none;">
+                <img id="rewardImg" src="" alt="Reward Badge">
+                <br>
+                <button class="close-btn" onclick="closeModal()">收下獎勵 / 返回</button>
+            </div>
+        </div>
     </div>
 
     <script>
         let totalPoints = 0;
+        let currentBadgeSrc = "";
+        
+        // 播放歡樂音效 (使用 Web Audio API，無需外部音檔)
+        function playSuccessSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                
+                function playNote(freq, startTime, duration) {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    gain.gain.setValueAtTime(0, startTime);
+                    gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                    osc.start(startTime);
+                    osc.stop(startTime + duration);
+                }
+                
+                let now = ctx.currentTime;
+                playNote(523.25, now, 0.2);       // C5
+                playNote(659.25, now + 0.15, 0.2); // E5
+                playNote(783.99, now + 0.3, 0.4);  // G5
+                playNote(1046.50, now + 0.45, 0.6); // C6
+            } catch(e) {
+                console.log("Audio play failed", e);
+            }
+        }
         
         function processLogin() {
             let cls = document.getElementById('login-class').value;
@@ -217,15 +267,33 @@
             let pts = document.getElementById('total-points');
             if(pts) pts.innerText = totalPoints;
 
-            if(localStorage.getItem('lv1_status') === 'approved' && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png'); localStorage.setItem('lv1_badge_shown', 'true'); }
-            else if(localStorage.getItem('lv2_status') === 'approved' && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png'); localStorage.setItem('lv2_badge_shown', 'true'); }
-            else if(localStorage.getItem('lv3_status') === 'approved' && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png'); localStorage.setItem('lv3_badge_shown', 'true'); }
-            else if(localStorage.getItem('lv4_status') === 'approved' && localStorage.getItem('lv4_badge_shown') !== 'true') { showRewardModal('聖誕好書推薦員徽章-4.png'); localStorage.setItem('lv4_badge_shown', 'true'); }
-            else if(localStorage.getItem('lv5_status') === 'approved' && localStorage.getItem('lv5_badge_shown') !== 'true') { showRewardModal('聖誕故事解密閱讀徽章-5.png'); localStorage.setItem('lv5_badge_shown', 'true'); }
-            else if(totalPoints >= 4 && totalPoints < 8 && localStorage.getItem('reward_4_claimed') !== 'true') { showRewardModal('冬日閱讀徽章與過關證書.png'); localStorage.setItem('reward_4_claimed', 'true'); }
-            else if(totalPoints >= 8 && localStorage.getItem('reward_8_claimed') !== 'true') { showRewardModal('冬日閱讀徽章與過關證書.png'); localStorage.setItem('reward_8_claimed', 'true'); }
+            // 判斷是否需要顯示禮物盒
+            if(localStorage.getItem('lv1_status') === 'approved' && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png', 'lv1_badge_shown'); }
+            else if(localStorage.getItem('lv2_status') === 'approved' && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png', 'lv2_badge_shown'); }
+            else if(localStorage.getItem('lv3_status') === 'approved' && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png', 'lv3_badge_shown'); }
+            else if(localStorage.getItem('lv4_status') === 'approved' && localStorage.getItem('lv4_badge_shown') !== 'true') { showRewardModal('聖誕好書推薦員徽章-4.png', 'lv4_badge_shown'); }
+            else if(localStorage.getItem('lv5_status') === 'approved' && localStorage.getItem('lv5_badge_shown') !== 'true') { showRewardModal('聖誕故事解密閱讀徽章-5.png', 'lv5_badge_shown'); }
+            else if(totalPoints >= 4 && totalPoints < 8 && localStorage.getItem('reward_4_claimed') !== 'true') { showRewardModal('冬日閱讀徽章與過關證書.png', 'reward_4_claimed'); }
+            else if(totalPoints >= 8 && localStorage.getItem('reward_8_claimed') !== 'true') { showRewardModal('冬日閱讀徽章與過關證書.png', 'reward_8_claimed'); }
         }
-        function showRewardModal(imageSrc) { document.getElementById('rewardImg').src = imageSrc; document.getElementById('rewardModal').style.display = 'block'; }
+        
+        let currentFlag = "";
+        function showRewardModal(imageSrc, flagName) { 
+            currentBadgeSrc = imageSrc; 
+            currentFlag = flagName;
+            document.getElementById('gift-box-container').style.display = 'block';
+            document.getElementById('badge-display').style.display = 'none';
+            document.getElementById('rewardModal').style.display = 'block'; 
+        }
+        
+        function openGift() {
+            playSuccessSound();
+            document.getElementById('gift-box-container').style.display = 'none';
+            document.getElementById('rewardImg').src = currentBadgeSrc;
+            document.getElementById('badge-display').style.display = 'block';
+            localStorage.setItem(currentFlag, 'true'); // 標記已領取
+        }
+        
         function closeModal() { document.getElementById('rewardModal').style.display = 'none'; checkProgress(); }
         function resetData() { localStorage.clear(); location.reload(); }
         window.onload = checkProgress;

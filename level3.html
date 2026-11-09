@@ -7,16 +7,17 @@
     <style>
         body { margin: 0; font-family: "微軟正黑體", sans-serif; background-color: #f4f1ea; color: #333; }
         header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; }
-        .back-btn { color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
+        .back-btn { white-space: nowrap; color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
         .main-container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .grade-banner { background: #162c4a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 15px; justify-content: center; font-size: 16px; }
         
         .culture-box { background: #fff8e1; border: 2px dashed #f39c12; padding: 20px; border-radius: 10px; margin-bottom: 25px; }
         .culture-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .culture-header h3 { margin: 0; color: #d35400; font-size: 18px; }
-        .audio-btn { background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .audio-btn { flex-shrink: 0; background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
         
+        /* 圖片外框終極修復：確保不切邊且不失真縮放 */
         .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
         .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
         
@@ -33,6 +34,7 @@
         label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 16px; color: #2c3e50; }
         .hint { font-size: 13px; color: #7f8c8d; margin-bottom: 5px; }
         input[type="text"], input[type="date"], input[type="number"], select, textarea, input[type="file"] { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        input::placeholder, textarea::placeholder { color: #95a5a6; font-style: italic; }
         textarea { height: 100px; resize: vertical; }
         .word-count { font-size: 13px; text-align: right; margin-top: 5px; font-weight: bold; color: #e67e22; }
         .submit-btn { width: 100%; padding: 15px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
@@ -74,7 +76,7 @@
                 <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
                 <div><strong>任務已解鎖！</strong><br>聖誕村的閱讀星星正在等待勇敢的挑戰者！讀一本書，到喜閱網完成閱讀測驗，再把成功過關的證明帶回聖誕村，就能點亮你的閱讀星星！</div>
             </div>
-            <div style="background:#fff3cd; padding:15px; border-radius:8px; margin-bottom:20px; color: #856404; font-size:14px;"><strong>⚠️ 截圖提醒：</strong>必須清楚看到「書名」、「過關日期」與「獲得點數」。</div><form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名</label><input type="text" id="b-name" required></div><div class="form-group"><label>📸 上傳喜閱網過關截圖</label><input type="file" id="file-upload" accept="image/*" required></div><div class="form-group"><label>📅 過關日期</label><input type="date" id="date" required></div><div class="form-group"><label>💰 獲得點數 (喜閱幣)</label><input type="number" id="points" min="0" required></div><div class="form-group"><label>🎨 過關色標</label><select id="color" required><option value="">請選擇...</option><option value="白">白</option><option value="黑">黑</option><option value="紅">紅</option><option value="橙">橙</option><option value="黃">黃</option><option value="綠">綠</option><option value="藍">藍</option><option value="靛">靛</option><option value="紫">紫</option><option value="銅">銅</option><option value="銀">銀</option><option value="金">金</option></select></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
+            <div style="background:#fff3cd; padding:15px; border-radius:8px; margin-bottom:20px; color: #856404; font-size:14px;"><strong>⚠️ 截圖提醒：</strong>必須清楚看到「書名」、「過關日期」與「獲得點數」。</div><form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名</label><input type="text" id="b-name" placeholder="請輸入喜閱網書籍的完整書名..." required></div><div class="form-group"><label>📸 上傳喜閱網過關截圖</label><input type="file" id="file-upload" accept="image/*" required></div><div class="form-group"><label>📅 過關日期</label><input type="date" id="date" required></div><div class="form-group"><label>💰 獲得點數 (喜閱幣)</label><input type="number" id="points" min="0" required></div><div class="form-group"><label>🎨 過關色標</label><select id="color" required><option value="">請選擇...</option><option value="白">白</option><option value="黑">黑</option><option value="紅">紅</option><option value="橙">橙</option><option value="黃">黃</option><option value="綠">綠</option><option value="藍">藍</option><option value="靛">靛</option><option value="紫">紫</option><option value="銅">銅</option><option value="銀">銀</option><option value="金">金</option></select></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
         </div>
     </div>
     <script>
@@ -166,7 +168,38 @@
             }
         }
 
-        function updateReq() {} async function submitForm(e) { e.preventDefault(); let bName = document.getElementById('b-name').value; let date = document.getElementById('date').value; let points = document.getElementById('points').value; let color = document.getElementById('color').value; let t1 = `過關日期：${date}\n獲得點數：${points}\n色標：${color}`; await sendData(e, 3, bName, t1, "", "", 'file-upload'); }
+        
+        // 老師可以自行擴充這個內建資料庫
+        const bookColorDB = {
+            "小王子": "白",
+            "西遊記": "黑",
+            "神奇樹屋": "紅",
+            "尋寶記": "藍",
+            "屁屁偵探": "黃",
+            "怪傑佐羅力": "橙"
+        };
+        
+        function updateReq() {} 
+        async function submitForm(e) { 
+            e.preventDefault(); 
+            let bName = document.getElementById('b-name').value.trim(); 
+            let date = document.getElementById('date').value; 
+            let points = document.getElementById('points').value; 
+            let color = document.getElementById('color').value; 
+            
+            // 自動檢查書名與色標是否吻合
+            for(let key in bookColorDB) {
+                if(bName.includes(key) || key.includes(bName)) {
+                    if(bookColorDB[key] !== color) {
+                        alert(`⛔ 系統檢查失敗：\n你輸入的書名「${bName}」在喜閱網應該是【${bookColorDB[key]}】色標喔！\n請重新確認後再送出。`);
+                        return;
+                    }
+                }
+            }
+            
+            let t1 = `過關日期：${date}\n獲得點數：${points}\n色標：${color}`; 
+            await sendData(e, 3, bName, t1, "", "", 'file-upload'); 
+        }
     </script>
 </body>
 </html>
