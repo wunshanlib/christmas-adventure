@@ -17,6 +17,7 @@
         .audio-btn { flex-shrink: 0; background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
         
+        /* 圖片外框終極修復：確保不切邊且不失真縮放 */
         .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
         .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
         
@@ -116,27 +117,25 @@
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
         }
 
-        // 防止重複送出功能 (由同一個學生輸入相同的書名)
-        function checkDuplicateSubmission(levelId, bookName) {
-            let submittedKey = 'submitted_books_lv' + levelId;
-            let submittedBooks = JSON.parse(localStorage.getItem(submittedKey) || '[]');
+        // 防止重複送出功能 (全域阻擋：跨關卡不能使用同一本書)
+        function checkDuplicateSubmission(bookName) {
+            let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             if(submittedBooks.includes(bookName)) {
-                alert(`⚠️ 你已經送交過「${bookName}」這本書囉！請換一本新的書來挑戰。`);
-                return true; // 是重複的
+                alert(`⚠️ 你已經用過「${bookName}」這本書挑戰過囉！每本書只能闖一關，請換一本新的書來挑戰。`);
+                return true; 
             }
-            return false; // 不是重複的
+            return false; 
         }
 
-        function saveSubmission(levelId, bookName) {
-            let submittedKey = 'submitted_books_lv' + levelId;
-            let submittedBooks = JSON.parse(localStorage.getItem(submittedKey) || '[]');
+        function saveSubmission(bookName) {
+            let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             submittedBooks.push(bookName);
-            localStorage.setItem(submittedKey, JSON.stringify(submittedBooks));
+            localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
         }
 
         // --- 強制 JSON 傳送模組 ---
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
-            if(checkDuplicateSubmission(levelId, bookName)) return; // 防呆：阻擋重複書名
+            if(checkDuplicateSubmission(bookName)) return; // 防呆：阻擋跨關卡重複書名
 
             let cls = localStorage.getItem('user_class') || "";
             let num = localStorage.getItem('user_num') || "";
@@ -176,7 +175,7 @@
                     body: JSON.stringify(payload)
                 });
                 
-                saveSubmission(levelId, bookName); // 成功送出後紀錄書名
+                saveSubmission(bookName); // 成功送出後紀錄書名
                 alert("任務已成功送達圖書館！請等待志工審核。");
                 localStorage.setItem('lv' + levelId + '_status', 'approved'); 
                 window.location.href = 'index.html';

@@ -273,7 +273,7 @@
             let pts = document.getElementById('total-points');
             if(pts) pts.innerText = totalPoints;
 
-            // 判斷是否需要顯示禮物盒 (修復：分開判斷 4 點與 8 點)
+            // 判斷是否需要顯示禮物盒 (分開判斷 4 點與 8 點)
             if(localStorage.getItem('lv1_status') === 'approved' && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png', 'lv1_badge_shown'); }
             else if(localStorage.getItem('lv2_status') === 'approved' && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png', 'lv2_badge_shown'); }
             else if(localStorage.getItem('lv3_status') === 'approved' && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png', 'lv3_badge_shown'); }

@@ -17,6 +17,7 @@
         .audio-btn { flex-shrink: 0; background: #3498db; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .audio-btn:hover { background: #2980b9; transform: scale(1.1); }
         
+        /* 圖片外框終極修復：確保不切邊且不失真縮放 */
         .culture-img-wrapper { width: 100%; border: 3px solid #f39c12; border-radius: 10px; margin-bottom: 15px; background: white; text-align: center; padding: 10px; box-sizing: border-box; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 150px; }
         .culture-img-wrapper img { max-width: 100%; height: auto; display: block; border-radius: 5px; }
         
@@ -73,9 +74,9 @@
         <div id="main-task-form">
             <div class="intro-box">
                 <button class="audio-btn" onclick="playAudio('intro')" style="width:45px; height:45px; font-size: 20px;">🔊</button>
-                <div><strong>任務已解鎖！</strong><br>聖誕村的閱讀星星正在等待勇敢的挑戰者！讀一本書，到喜閱網完成閱讀測驗，再把成功過關的證明帶回聖誕村，就能點亮你的閱讀星星！</div>
+                <div><strong>任務已解鎖！</strong><br>聖誕村的閱讀星星正在等待勇敢的挑戰者！讀一本書，到喜閱網完成閱讀測驗，再把成功過關的證明帶回聖誕村，就能點亮你的閱讀星星！<div style='text-align: center; margin-top: 15px;'><img src='喜閱網通過畫面示範.png' alt='喜閱網示範截圖' style='max-width: 100%; border-radius: 8px; border: 2px dashed #f39c12;'></div></div>
             </div>
-            <div style="background:#fff3cd; padding:15px; border-radius:8px; margin-bottom:20px; color: #856404; font-size:14px;"><strong>⚠️ 截圖提醒：</strong>必須清楚看到「書名」、「過關日期」與「獲得點數」。</div><form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名</label><input type="text" id="b-name" placeholder="請輸入喜閱網書籍的完整書名..." required></div><div class="form-group"><label>📸 上傳喜閱網過關截圖</label><input type="file" id="file-upload" accept="image/*" required></div><div class="form-group"><label>📅 過關日期</label><input type="date" id="date" required></div><div class="form-group"><label>💰 獲得點數 (喜閱幣)</label><input type="number" id="points" min="0" required></div><div class="form-group"><label>🎨 過關色標</label><select id="color" required><option value="">請選擇...</option><option value="白">白</option><option value="黑">黑</option><option value="紅">紅</option><option value="橙">橙</option><option value="黃">黃</option><option value="綠">綠</option><option value="藍">藍</option><option value="靛">靛</option><option value="紫">紫</option><option value="銅">銅</option><option value="銀">銀</option><option value="金">金</option></select></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
+            <div style="background:#fff3cd; padding:15px; border-radius:8px; margin-bottom:20px; color: #856404; font-size:14px;"><strong>⚠️ 截圖提醒：</strong>請參考上方圖片，截圖必須清楚看到「書名」、「過關日期」與「獲得點數」。</div><form onsubmit="submitForm(event)"><div class="form-group"><label>📖 書名</label><input type="text" id="b-name" placeholder="請輸入喜閱網書籍的完整書名..." required></div><div class="form-group"><label>📸 上傳喜閱網過關截圖</label><input type="file" id="file-upload" accept="image/*" required></div><div class="form-group"><label>📅 過關日期</label><input type="date" id="date" required></div><div class="form-group"><label>💰 獲得點數 (喜閱幣)</label><input type="number" id="points" min="0" required></div><div class="form-group"><label>🎨 過關色標</label><select id="color" required><option value="">請選擇...</option><option value="白">白</option><option value="黑">黑</option><option value="紅">紅</option><option value="橙">橙</option><option value="黃">黃</option><option value="綠">綠</option><option value="藍">藍</option><option value="靛">靛</option><option value="紫">紫</option><option value="銅">銅</option><option value="銀">銀</option><option value="金">金</option></select></div><button type="submit" class="submit-btn">送出任務，等待志工審核</button></form>
         </div>
     </div>
     <script>
@@ -109,34 +110,32 @@
         window.onload = function() { loadUserData(); if(localStorage.getItem('lv3_unlocked') === 'true') showMainForm(); };
         
         function playAudio(type) {
-            let text = type === '日本' ? "你知道嗎？在日本，聖誕節吃肯德基炸雞，是許多人喜愛的過節方式！1974年，肯德基推出聖誕節廣告，邀請大家用炸雞慶祝佳節。沒想到大受歡迎，逐漸形成特別的節慶習慣。現在，有些家庭會提前預訂炸雞套餐，搭配聖誕蛋糕，與親友共享美食。原來，商業廣告也可能創造新的節慶文化！" : "聖誕村的閱讀星星正在等待勇敢的挑戰者！讀一本書，到喜閱網完成閱讀測驗，再把成功過關的證明帶回聖誕村，就能點亮你的閱讀星星！";
+            let text = type === '日本' ? "你知道嗎？在日本，聖誕節吃肯德基炸雞，是許多人喜愛的過節方式！1974年，肯德基推出聖誕節廣告，邀請大家用炸雞慶祝佳節。沒想到大受歡迎，逐漸形成特別的節慶習慣。現在，有些家庭會提前預訂炸雞套餐，搭配聖誕蛋糕，與親友共享美食。原來，商業廣告也可能創造新的節慶文化！" : "聖誕村的閱讀星星正在等待勇敢的挑戰者！讀一本書，到喜閱網完成閱讀測驗，再把成功過關的證明帶回聖誕村，就能點亮你的閱讀星星！<div style='text-align: center; margin-top: 15px;'><img src='喜閱網通過畫面示範.png' alt='喜閱網示範截圖' style='max-width: 100%; border-radius: 8px; border: 2px dashed #f39c12;'></div>";
             let msg = new SpeechSynthesisUtterance(text); msg.lang = 'zh-TW'; msg.rate = 1.2;
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
             if(femaleVoice) msg.voice = femaleVoice; window.speechSynthesis.speak(msg);
         }
 
-        // 防止重複送出功能 (由同一個學生輸入相同的書名)
-        function checkDuplicateSubmission(levelId, bookName) {
-            let submittedKey = 'submitted_books_lv' + levelId;
-            let submittedBooks = JSON.parse(localStorage.getItem(submittedKey) || '[]');
+        // 防止重複送出功能 (全域阻擋：跨關卡不能使用同一本書)
+        function checkDuplicateSubmission(bookName) {
+            let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             if(submittedBooks.includes(bookName)) {
-                alert(`⚠️ 你已經送交過「${bookName}」這本書囉！請換一本新的書來挑戰。`);
-                return true; // 是重複的
+                alert(`⚠️ 你已經用過「${bookName}」這本書挑戰過囉！每本書只能闖一關，請換一本新的書來挑戰。`);
+                return true; 
             }
-            return false; // 不是重複的
+            return false; 
         }
 
-        function saveSubmission(levelId, bookName) {
-            let submittedKey = 'submitted_books_lv' + levelId;
-            let submittedBooks = JSON.parse(localStorage.getItem(submittedKey) || '[]');
+        function saveSubmission(bookName) {
+            let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             submittedBooks.push(bookName);
-            localStorage.setItem(submittedKey, JSON.stringify(submittedBooks));
+            localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
         }
 
         // --- 強制 JSON 傳送模組 ---
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
-            if(checkDuplicateSubmission(levelId, bookName)) return; // 防呆：阻擋重複書名
+            if(checkDuplicateSubmission(bookName)) return; // 防呆：阻擋跨關卡重複書名
 
             let cls = localStorage.getItem('user_class') || "";
             let num = localStorage.getItem('user_num') || "";
@@ -176,7 +175,7 @@
                     body: JSON.stringify(payload)
                 });
                 
-                saveSubmission(levelId, bookName); // 成功送出後紀錄書名
+                saveSubmission(bookName); // 成功送出後紀錄書名
                 alert("任務已成功送達圖書館！請等待志工審核。");
                 localStorage.setItem('lv' + levelId + '_status', 'approved'); 
                 window.location.href = 'index.html';
