@@ -6,9 +6,9 @@
     <title>考後閱讀趣 智慧集點GO! - 奇幻聖誕村閱讀大冒險</title>
     <style>
         body { margin: 0; font-family: "微軟正黑體", sans-serif; background: linear-gradient(to bottom, #111a2d, #1e3a5f); color: white; text-align: center; min-height: 100vh; }
-        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background-color: rgba(17, 26, 45, 0.9); border-bottom: 2px solid #f39c12; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 30px; background-color: rgba(17, 26, 45, 0.9); border-bottom: 2px solid #f39c12; flex-wrap: wrap; gap: 10px; }
         .header-title { font-size: 18px; font-weight: bold; color: #f39c12; }
-        .header-status { font-size: 16px; color: #ecf0f1; display: flex; gap: 15px; align-items: center;}
+        .header-status { font-size: 16px; color: #ecf0f1; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
         
         .map-wrapper { 
             margin: 20px auto; width: 95%; max-width: 1400px; 
@@ -101,7 +101,7 @@
         .gift-hint { font-size: 20px; color: #f1c40f; font-weight: bold; margin-top: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
         
         /* 闖關說明按鈕與視窗修復：設定最大高度與自動捲動 */
-        .info-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; margin-left: 10px; font-size: 14px;}
+        .info-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 14px;}
         .info-btn:hover { background: #2980b9; }
         
         .info-content { 
@@ -125,6 +125,9 @@
         @keyframes shake { 0% {transform: rotate(0deg);} 25% {transform: rotate(10deg);} 50% {transform: rotate(0deg);} 75% {transform: rotate(-10deg);} 100% {transform: rotate(0deg);} }
 
         @media (max-width: 768px) {
+            header { flex-direction: column; padding: 15px; }
+            .header-status { flex-direction: column; gap: 8px; margin-top: 10px;}
+            .header-status > div { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
             .map-wrapper { height: auto; min-height: 1200px; aspect-ratio: auto; overflow-y: auto; background-size: cover; background-position: top center; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 50px 0;}
             .glass-card { position: relative; left: auto !important; right: auto !important; top: auto !important; bottom: auto !important; margin: 15px auto; width: 85%; }
             .marquee-container { position: relative; width: 100%; }
@@ -199,10 +202,12 @@
     <header>
         <div class="header-title">文山國小圖書館｜考後閱讀趣 智慧集點GO!</div>
         <div class="header-status">
-            <span id="user-info" style="margin-right: 15px; color: #2ecc71; font-weight: bold;"></span>
+            <span id="user-info" style="color: #2ecc71; font-weight: bold;"></span>
             <span>累積點數：<strong id="total-points" style="color:#f1c40f; font-size:20px;">0</strong> 點</span>
-            <button class="info-btn" onclick="showInfoModal()">📄 闖關說明</button>
-            <button onclick="resetData()" style="margin-left: 10px; background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">登出/重設</button>
+            <div>
+                <button class="info-btn" onclick="showInfoModal()">📄 闖關說明</button>
+                <button onclick="resetData()" style="background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold;">登出/重設</button>
+            </div>
         </div>
     </header>
     
@@ -257,13 +262,13 @@
         function showInfoModal() { document.getElementById('infoModal').style.display = 'block'; }
         function closeInfoModal() { document.getElementById('infoModal').style.display = 'none'; window.speechSynthesis.cancel(); }
         
-        // 播放闖關說明語音 (再稍微放慢一點，適應不同手機)
+        // 播放闖關說明語音 (調整速率避免手機快轉)
         function playInfoAudio() {
             window.speechSynthesis.cancel(); // 停止之前可能正在播放的語音
             let text = "歡迎來到奇幻聖誕村！這裡有五個不同的國家站點等待你來探索。闖關步驟與規則：第一、點擊地圖上的卡片進入關卡。第二、閱讀該國的聖誕文化報報。第三、通過選擇題測驗，解鎖閱讀任務。第四、時間限制部分，除了第一關與第二關可以同時進行外，後續關卡必須間隔三天才能闖關喔！第五、每關必須使用不同的書，且前兩關必須是新書。最後送出任務，等待圖書館志工審核。集滿4點可獲得智慧水兌換徽章，集滿8點可獲得過關證書並參加抽獎！";
             let msg = new SpeechSynthesisUtterance(text); 
             msg.lang = 'zh-TW'; 
-            msg.rate = 0.9; // 進一步降速，解決手機快轉問題
+            msg.rate = 0.9; // 降低語速避免手機上聽起來像快轉
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
             if(femaleVoice) msg.voice = femaleVoice; 

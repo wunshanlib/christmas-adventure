@@ -6,7 +6,10 @@
     <title>第1關｜封面藏玄機</title>
     <style>
         body { margin: 0; font-family: "微軟正黑體", sans-serif; background-color: #f4f1ea; color: #333; }
-        header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; }
+        header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; flex-wrap: wrap; gap: 10px; }
+        .header-title { font-size: 18px; font-weight: bold; color: #f39c12; }
+        .header-status { font-size: 16px; color: #ecf0f1; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        
         .back-btn { white-space: nowrap; color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
         .main-container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .grade-banner { background: #162c4a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 15px; justify-content: center; font-size: 16px; }
@@ -44,6 +47,11 @@
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; }
         .radio-group label, .checkbox-group label { font-weight: normal; font-size: 15px; cursor: pointer; }
         @keyframes popIn { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        
+        @media (max-width: 768px) {
+            header { flex-direction: column; padding: 15px; }
+            .header-title { text-align: center; margin-bottom: 10px; }
+        }
     </style>
 </head>
 <body>

@@ -6,7 +6,10 @@
     <title>第5關｜聖誕故事盒</title>
     <style>
         body { margin: 0; font-family: "微軟正黑體", sans-serif; background-color: #f4f1ea; color: #333; }
-        header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; }
+        header { padding: 15px 30px; background-color: #162c4a; color: white; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #f39c12; flex-wrap: wrap; gap: 10px; }
+        .header-title { font-size: 18px; font-weight: bold; color: #f39c12; }
+        .header-status { font-size: 16px; color: #ecf0f1; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        
         .back-btn { white-space: nowrap; color: white; text-decoration: none; background: #e74c3c; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
         .main-container { max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .grade-banner { background: #162c4a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; display: flex; align-items: center; gap: 15px; justify-content: center; font-size: 16px; }
@@ -44,6 +47,11 @@
         .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; }
         .radio-group label, .checkbox-group label { font-weight: normal; font-size: 15px; cursor: pointer; }
         @keyframes popIn { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        
+        @media (max-width: 768px) {
+            header { flex-direction: column; padding: 15px; }
+            .header-title { text-align: center; margin-bottom: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -194,7 +202,7 @@
             }
         }
 
-        let dynamicMin = 10; function updateReq() { dynamicMin = window.isHighReq ? 20 : 10; triggerDynamicCheck(); } function triggerDynamicCheck() { checkFixedWords('w-what', dynamicMin); checkFixedWords('w-why', dynamicMin); checkFixedWords('w-how', dynamicMin); } function checkFixedWords(id, limit) { let el = document.getElementById(id); if(!el) return true; let text = el.value; let count = text.replace(/\s+/g, '').length; let zhCount = (text.match(/[\u4e00-\u9fa5]/g) || []).length; let display = document.getElementById(id + '-count'); if (count < limit) { display.innerText = `至少需要 ${limit} 字，目前：${count} 字`; display.style.color = '#e74c3c'; return false; } else if (zhCount < Math.floor(limit * 0.4)) { display.innerText = `請認真填寫，不可亂打數字英文喔！`; display.style.color = '#e74c3c'; return false; } else { display.innerText = `目前：${count} 字 (達標 ✅)`; display.style.color = '#27ae60'; return true; } } async function submitForm(e) { e.preventDefault(); if (!checkFixedWords('theme-reason', 15) || !checkFixedWords('w-who', 2) || !checkFixedWords('w-when', 2) || !checkFixedWords('w-where', 2) || !checkFixedWords('w-what', dynamicMin) || !checkFixedWords('w-why', dynamicMin) || !checkFixedWords('w-how', dynamicMin)) { alert("還有欄位字數不足喔，請檢查紅字提示！"); return; } let bName = document.getElementById('b-name').value; let t = document.querySelector('input[name="t"]:checked').value; let tr = document.getElementById('theme-reason').value; let t1 = `主題：${t}\n理由：${tr}`; let t2 = `Who：${document.getElementById('w-who').value}\nWhen：${document.getElementById('w-when').value}\nWhere：${document.getElementById('w-where').value}`; let t3 = `What：${document.getElementById('w-what').value}\nWhy：${document.getElementById('w-why').value}\nHow：${document.getElementById('w-how').value}`; await sendData(e, 5, bName, t1, t2, t3, 'file-upload'); }
+        let dynamicMin = 10; function updateReq() { dynamicMin = window.isHighReq ? 20 : 10; triggerDynamicCheck(); } function triggerDynamicCheck() { checkFixedWords('w-what', dynamicMin); checkFixedWords('w-why', dynamicMin); checkFixedWords('w-how', dynamicMin); } function checkFixedWords(id, limit) { let el = document.getElementById(id); if(!el) return true; let text = el.value; let count = text.replace(/\s+/g, '').length; let zhCount = (text.match(/[一-龥]/g) || []).length; let display = document.getElementById(id + '-count'); if (count < limit) { display.innerText = `至少需要 ${limit} 字，目前：${count} 字`; display.style.color = '#e74c3c'; return false; } else if (zhCount < Math.floor(limit * 0.4)) { display.innerText = `請認真填寫，不可亂打數字英文喔！`; display.style.color = '#e74c3c'; return false; } else { display.innerText = `目前：${count} 字 (達標 ✅)`; display.style.color = '#27ae60'; return true; } } async function submitForm(e) { e.preventDefault(); if (!checkFixedWords('theme-reason', 15) || !checkFixedWords('w-who', 2) || !checkFixedWords('w-when', 2) || !checkFixedWords('w-where', 2) || !checkFixedWords('w-what', dynamicMin) || !checkFixedWords('w-why', dynamicMin) || !checkFixedWords('w-how', dynamicMin)) { alert("還有欄位字數不足喔，請檢查紅字提示！"); return; } let bName = document.getElementById('b-name').value; let t = document.querySelector('input[name="t"]:checked').value; let tr = document.getElementById('theme-reason').value; let t1 = `主題：${t}\n理由：${tr}`; let t2 = `Who：${document.getElementById('w-who').value}\nWhen：${document.getElementById('w-when').value}\nWhere：${document.getElementById('w-where').value}`; let t3 = `What：${document.getElementById('w-what').value}\nWhy：${document.getElementById('w-why').value}\nHow：${document.getElementById('w-how').value}`; await sendData(e, 5, bName, t1, t2, t3, 'file-upload'); }
     </script>
 </body>
 </html>
