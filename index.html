@@ -240,7 +240,7 @@
         <div class="marquee-container">✨ 請直接點選地圖上的「01 ~ 05 站點卡片」展開挑戰，集滿點數可兌換專屬大獎！ ✨</div>
     </div>
 
-    <!-- 獎勵視窗 (加入拆禮物互動與豪華音效) -->
+    <!-- 獎勵視窗 -->
     <div id="rewardModal" class="modal">
         <div class="modal-content">
             <div id="gift-box-container" onclick="openGift()">
@@ -256,26 +256,25 @@
     </div>
 
     <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwJnA7jL4K0uDqoQ7g5-TuqjaVNvQvfwicwqdWPzXXqpyeVkZ4qDZvCDa-sjyz-PmvldQ/exec";
         let totalPoints = 0;
         let currentBadgeSrc = "";
         
         function showInfoModal() { document.getElementById('infoModal').style.display = 'block'; }
         function closeInfoModal() { document.getElementById('infoModal').style.display = 'none'; window.speechSynthesis.cancel(); }
         
-        // 播放闖關說明語音 (調整速率避免手機快轉)
         function playInfoAudio() {
-            window.speechSynthesis.cancel(); // 停止之前可能正在播放的語音
+            window.speechSynthesis.cancel();
             let text = "歡迎來到奇幻聖誕村！這裡有五個不同的國家站點等待你來探索。闖關步驟與規則：第一、點擊地圖上的卡片進入關卡。第二、閱讀該國的聖誕文化報報。第三、通過選擇題測驗，解鎖閱讀任務。第四、時間限制部分，除了第一關與第二關可以同時進行外，後續關卡必須間隔三天才能闖關喔！第五、每關必須使用不同的書，且前兩關必須是新書。最後送出任務，等待圖書館志工審核。集滿4點可獲得智慧水兌換徽章，集滿8點可獲得過關證書並參加抽獎！";
             let msg = new SpeechSynthesisUtterance(text); 
             msg.lang = 'zh-TW'; 
-            msg.rate = 0.9; // 降低語速避免手機上聽起來像快轉
+            msg.rate = 0.9;
             let voices = window.speechSynthesis.getVoices();
             let femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Xiaoxiao'));
             if(femaleVoice) msg.voice = femaleVoice; 
             window.speechSynthesis.speak(msg);
         }
         
-        // 升級版豪華勝利音效 (歡樂升階和弦 + 撒花感)
         function playSuccessSound() {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -297,39 +296,64 @@
                 }
                 
                 let now = ctx.currentTime;
-                // 歡樂上行音階
-                playNote(523.25, now, 0.15, 'triangle', 0.2);       // C5
-                playNote(659.25, now + 0.12, 0.15, 'triangle', 0.2); // E5
-                playNote(783.99, now + 0.24, 0.15, 'triangle', 0.2); // G5
-                
-                // 勝利和弦
-                playNote(1046.50, now + 0.4, 0.8, 'sine', 0.3);      // C6
-                playNote(659.25,  now + 0.4, 0.8, 'sine', 0.2);      // E5
-                playNote(1318.51, now + 0.4, 0.8, 'triangle', 0.1);  // E6 (加點亮亮的聲音)
-                
+                playNote(523.25, now, 0.15, 'triangle', 0.2); 
+                playNote(659.25, now + 0.12, 0.15, 'triangle', 0.2); 
+                playNote(783.99, now + 0.24, 0.15, 'triangle', 0.2); 
+                playNote(1046.50, now + 0.4, 0.8, 'sine', 0.3);      
+                playNote(659.25,  now + 0.4, 0.8, 'sine', 0.2);      
+                playNote(1318.51, now + 0.4, 0.8, 'triangle', 0.1);  
             } catch(e) {
                 console.log("Audio play failed", e);
             }
         }
         
-        function processLogin() {
+        async function processLogin() {
             let cls = document.getElementById('login-class').value;
             let num = document.getElementById('login-number').value;
             let name = document.getElementById('login-name').value.trim();
             if(!cls || !num || !name) { alert("請完整填寫班級、座號與姓名喔！"); return; }
             let grade = cls.charAt(0);
+            
+            let btn = document.querySelector('.login-btn');
+            let oldText = btn.innerText;
+            btn.innerText = "連線同步資料中，請稍候...";
+            btn.disabled = true;
+
+            try {
+                let queryUrl = GAS_URL + "?action=query&className=" + encodeURIComponent(cls) + "&seatNum=" + encodeURIComponent(num) + "&studentName=" + encodeURIComponent(name);
+                let response = await fetch(queryUrl);
+                let result = await response.json();
+                
+                if (result.found) {
+                    for (let level in result.levels) {
+                        localStorage.setItem(level, result.levels[level]);
+                    }
+                    if (result.submittedBooks && result.submittedBooks.length > 0) {
+                        localStorage.setItem('submitted_all_books', JSON.stringify(result.submittedBooks));
+                    }
+                    if (result.lastSubmitTime) {
+                        localStorage.setItem('last_submission_time', result.lastSubmitTime);
+                    }
+                }
+            } catch(e) {
+                console.log("Sync error:", e);
+            }
+            
             localStorage.setItem('user_class', cls);
             localStorage.setItem('user_num', num);
             localStorage.setItem('user_name', name);
             localStorage.setItem('student_grade', grade);
+            
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('user-info').innerText = `👤 ${cls.charAt(0)}年${cls.charAt(2)}班 ${num}號 ${name}`;
             
-            // 如果是第一次登入，顯示闖關說明
             if(localStorage.getItem('info_shown') !== 'true') {
                 showInfoModal();
                 localStorage.setItem('info_shown', 'true');
             }
+            
+            btn.innerText = oldText;
+            btn.disabled = false;
             
             checkProgress();
         }
@@ -338,14 +362,12 @@
             let card = document.getElementById(cardId);
             if(card) {
                 card.classList.add('completed');
-                // card.onclick = function(e){ e.preventDefault(); }; // 移除封鎖點擊，為了讓學生可以進去重看內容
             }
             let pill = document.getElementById(pillId);
             if(pill) pill.innerText = '✅ 已完成';
             totalPoints += pointsToAdd;
         }
 
-        // 鎖定後續關卡 (3天限制)
         function lockCards() {
             let lastSubmitStr = localStorage.getItem('last_submission_time');
             if(lastSubmitStr) {
@@ -354,10 +376,8 @@
                 let diffTime = Math.abs(now - lastSubmit);
                 let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
                 
-                // 如果距離上次送交還不到3天
                 if (diffDays < 3) {
                     let remainingDays = 3 - diffDays;
-                    // 將還沒破關的關卡(3,4,5)鎖住
                     if(localStorage.getItem('lv3_status') !== 'approved') lockCard('btn-lv3', 'pill-3', remainingDays);
                     if(localStorage.getItem('lv4_status') !== 'approved') lockCard('btn-lv4', 'pill-4', remainingDays);
                     if(localStorage.getItem('lv5_status') !== 'approved') lockCard('btn-lv5', 'pill-5', remainingDays);
@@ -400,13 +420,10 @@
             let pts = document.getElementById('total-points');
             if(pts) pts.innerText = totalPoints;
             
-            // 檢查是否需要鎖定3,4,5關 (間隔3天)
-            // 只要完成過1或2其中之一，就會觸發計時器
             if(localStorage.getItem('lv1_status') === 'approved' || localStorage.getItem('lv2_status') === 'approved') {
                 lockCards();
             }
 
-            // 判斷是否需要顯示禮物盒 (修復：分開判斷 4 點與 8 點)
             if(localStorage.getItem('lv1_status') === 'approved' && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png', 'lv1_badge_shown'); }
             else if(localStorage.getItem('lv2_status') === 'approved' && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png', 'lv2_badge_shown'); }
             else if(localStorage.getItem('lv3_status') === 'approved' && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png', 'lv3_badge_shown'); }
@@ -430,7 +447,7 @@
             document.getElementById('gift-box-container').style.display = 'none';
             document.getElementById('rewardImg').src = currentBadgeSrc;
             document.getElementById('badge-display').style.display = 'block';
-            localStorage.setItem(currentFlag, 'true'); // 標記已領取
+            localStorage.setItem(currentFlag, 'true');
         }
         
         function closeModal() { document.getElementById('rewardModal').style.display = 'none'; checkProgress(); }
