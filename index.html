@@ -47,9 +47,10 @@
             box-shadow: 0 12px 25px rgba(241, 196, 15, 0.3);
         }
         
-        /* 各種狀態外觀 */
+        /* 鎖定狀態的卡片外觀 */
         .glass-card.locked { opacity: 0.6; pointer-events: none; filter: grayscale(80%); border-color: #7f8c8d; }
         .locked .node-num { background: #7f8c8d; color: #fff; }
+        .locked .status-pill { background: #34495e; color: #bdc3c7; border-color: #7f8c8d; }
         
         .completed { border-color: #2ecc71 !important; box-shadow: 0 0 15px rgba(46,204,113,0.3); pointer-events: none;}
         .pending { border-color: #f39c12 !important; box-shadow: 0 0 15px rgba(243,156,18,0.3); }
@@ -90,9 +91,15 @@
         .close-btn { background: #e74c3c; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 8px; cursor: pointer; margin-top: 20px; font-weight: bold; }
         .close-btn:hover { background: #c0392b; }
         
-        #gift-box { font-size: 120px; cursor: pointer; animation: shake 1.5s infinite; transition: 0.3s; margin: 40px auto; }
-        #gift-box:hover { transform: scale(1.1); }
-        .gift-hint { font-size: 20px; color: #f1c40f; font-weight: bold; margin-top: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5);}
+        /* 抽獎按鈕特效 */
+        .lottery-btn { background: linear-gradient(45deg, #e74c3c, #c0392b); color: white; border: 4px solid #f1c40f; padding: 12px 25px; font-size: 18px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(241, 196, 15, 0.8); animation: pulse 1.5s infinite; transition: 0.3s; width: 90%; max-width: 350px;}
+        .lottery-btn:hover { transform: scale(1.05); background: linear-gradient(45deg, #c0392b, #922b21); }
+        .lottery-btn.won { background: #27ae60; border-color: #2ecc71; animation: none; cursor: default; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+        .lottery-btn.won:hover { transform: none; }
+        @keyframes pulse { 0% {box-shadow: 0 0 10px #f1c40f;} 50% {box-shadow: 0 0 25px #f39c12;} 100% {box-shadow: 0 0 10px #f1c40f;} }
+        
+        .shake-anim { animation: shakeGacha 0.4s infinite; }
+        @keyframes shakeGacha { 0% {transform: rotate(0deg) scale(1);} 25% {transform: rotate(15deg) scale(1.1);} 50% {transform: rotate(0deg) scale(1);} 75% {transform: rotate(-15deg) scale(1.1);} 100% {transform: rotate(0deg) scale(1);} }
         
         .info-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 14px;}
         .info-btn:hover { background: #2980b9; }
@@ -114,7 +121,6 @@
         .info-content li { margin-bottom: 8px; }
         
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes shake { 0% {transform: rotate(0deg);} 25% {transform: rotate(10deg);} 50% {transform: rotate(0deg);} 75% {transform: rotate(-10deg);} 100% {transform: rotate(0deg);} }
 
         @media (max-width: 768px) {
             header { flex-direction: column; padding: 15px; }
@@ -175,16 +181,16 @@
             <ol>
                 <li>點擊地圖上的「01 ~ 05」卡片進入關卡。</li>
                 <li>閱讀該國的「聖誕文化報報」。</li>
-                <li>通過選擇題測驗，即可解鎖「閱讀任務」。</li>
+                <li>通過選擇題測驗，解鎖「閱讀任務」。</li>
                 <li><strong>時間限制：</strong>除第1與第2關可同時進行外，**後續關卡需間隔 3 天**才能闖關喔！</li>
                 <li><strong>書籍限制：</strong>每關必須使用「不同的書」，且第1、2關必須使用「新書」。</li>
-                <li><strong>審核狀態：</strong>送出後顯示「⏳ 待審核」，志工批改後會變成「✅ 已通過」或「❌ 需修正」。</li>
+                <li><strong>審核狀態：</strong>送出後顯示「⏳ 待審核」，志工批改後會變成「✅ 已通過」或「❌ 需修正」。若被退回，點入該關卡即可重新修改送出！</li>
             </ol>
 
             <h3>🎁 獎勵辦法</h3>
             <ul>
-                <li>集滿 <strong>4 點</strong>：可獲得「智慧水兌換徽章」（可至圖書館兌換智慧水）。</li>
-                <li>集滿 <strong>8 點</strong> (全數通關)：可獲得「閱讀大冒險過關證書」，並取得教務處參加抽獎的資格！</li>
+                <li>集滿 <strong>4 點</strong>：可獲得「智慧水兌換徽章」（憑畫面至圖書館兌換）。</li>
+                <li>集滿 <strong>8 點</strong> (全數通過審核)：可直接在網頁上解鎖「聖誕大抽獎」，馬上抽馬上看結果！</li>
             </ul>
             <div style="text-align: center; margin-top: 25px;">
                 <button class="close-btn" onclick="closeInfoModal()">我瞭解了，開始闖關！</button>
@@ -205,6 +211,11 @@
     </header>
     
     <div class="map-wrapper">
+        <!-- 抽獎按鈕區域 (置於地圖上方) -->
+        <div id="lottery-btn-container" style="display:none; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 50; width: 100%; text-align: center;">
+            <button id="lottery-btn" onclick="startLottery()" class="lottery-btn">🎁 滿8點解鎖！點我抽聖誕大獎</button>
+        </div>
+
         <a href="level1.html" class="glass-card" id="btn-lv1">
             <div class="card-header"><div class="node-num">01</div><h3 class="node-title">封面藏玄機</h3></div>
             <p class="node-subtitle">UA 烏克蘭聖誕蜘蛛 - 封面預測</p>
@@ -230,14 +241,14 @@
             <p class="node-subtitle">TW 臺灣交換禮物 - 故事解密</p>
             <div class="card-footer"><span class="status-pill" id="pill-5">未完成</span><span class="points">2 點</span></div>
         </a>
-        <div class="marquee-container">✨ 請直接點選地圖上的「01 ~ 05 站點卡片」展開挑戰，集滿點數可兌換專屬大獎！ ✨</div>
+        <div class="marquee-container">✨ 請點選地圖上的卡片展開挑戰。所有關卡審核通過集滿 8 點，即可解鎖最終聖誕大抽獎！ ✨</div>
     </div>
 
-    <!-- 獎勵視窗 -->
+    <!-- 智慧水/通關徽章獎勵視窗 -->
     <div id="rewardModal" class="modal">
         <div class="modal-content">
             <div id="gift-box-container" onclick="openGift()">
-                <div id="gift-box">🎁</div>
+                <div id="gift-box" style="font-size: 120px; cursor: pointer; margin: 40px auto;">🎁</div>
                 <div class="gift-hint">你獲得了新徽章，點擊拆開禮物！</div>
             </div>
             <div id="badge-display" style="display:none;">
@@ -248,17 +259,29 @@
         </div>
     </div>
 
+    <!-- 終極抽獎視窗 -->
+    <div id="gachaModal" class="modal">
+        <div class="modal-content" style="background: rgba(17, 26, 45, 0.98); border: 4px solid #f1c40f;">
+            <div id="gacha-box" style="font-size: 100px; margin: 30px;">🎅</div>
+            <div id="gacha-msg" style="font-size: 20px; color: #f1c40f; font-weight: bold; margin-bottom: 20px;">聖誕精靈正在為你挑選禮物...</div>
+            <div id="gacha-result" style="display:none; margin-top: 20px;">
+                <button class="close-btn" onclick="closeGacha()">收下禮物 / 關閉</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwJnA7jL4K0uDqoQ7g5-TuqjaVNvQvfwicwqdWPzXXqpyeVkZ4qDZvCDa-sjyz-PmvldQ/exec";
         let totalPoints = 0;
         let currentBadgeSrc = "";
+        let isGachaRolling = false;
         
         function showInfoModal() { document.getElementById('infoModal').style.display = 'block'; }
         function closeInfoModal() { document.getElementById('infoModal').style.display = 'none'; window.speechSynthesis.cancel(); }
         
         function playInfoAudio() {
             window.speechSynthesis.cancel();
-            let text = "歡迎來到奇幻聖誕村！這裡有五個不同的國家站點等待你來探索。闖關步驟與規則：第一、點擊地圖上的卡片進入關卡。第二、閱讀該國的聖誕文化報報。第三、通過選擇題測驗，解鎖閱讀任務。第四、時間限制部分，除了第一關與第二關可以同時進行外，後續關卡必須間隔三天才能闖關喔！第五、每關必須使用不同的書，且前兩關必須是新書。最後送出任務，等待圖書館志工審核。送出後會顯示待審核，通過後才能獲得點數喔！集滿4點可獲得智慧水兌換徽章，集滿8點可獲得過關證書並參加抽獎！";
+            let text = "歡迎來到奇幻聖誕村！這裡有五個不同的國家站點等待你來探索。闖關步驟與規則：第一、點擊地圖上的卡片進入關卡。第二、閱讀該國的聖誕文化報報。第三、通過選擇題測驗，解鎖閱讀任務。第四、時間限制部分，除了第一關與第二關可以同時進行外，後續關卡必須間隔三天才能闖關喔！第五、每關必須使用不同的書，且前兩關必須是新書。最後送出任務，等待圖書館志工審核。送出後會顯示待審核，通過後才能獲得點數喔！若被退回需修正，可以重新點入該關卡修改。集滿4點可獲得智慧水兌換徽章，五關全數通過集滿8點，更可以直接在網頁上解鎖聖誕大抽獎！馬上抽馬上看結果！";
             let msg = new SpeechSynthesisUtterance(text); 
             msg.lang = 'zh-TW'; 
             msg.rate = 0.9;
@@ -295,8 +318,81 @@
                 playNote(1046.50, now + 0.4, 0.8, 'sine', 0.3);      
                 playNote(659.25,  now + 0.4, 0.8, 'sine', 0.2);      
                 playNote(1318.51, now + 0.4, 0.8, 'triangle', 0.1);  
+            } catch(e) { console.log("Audio play failed", e); }
+        }
+
+        // --- 抽獎系統邏輯 ---
+        async function startLottery() {
+            if (isGachaRolling) return;
+            let btn = document.getElementById('lottery-btn');
+            btn.disabled = true;
+            isGachaRolling = true;
+            
+            document.getElementById('gachaModal').style.display = 'block';
+            document.getElementById('gacha-result').style.display = 'none';
+            document.getElementById('gacha-box').className = 'shake-anim';
+            document.getElementById('gacha-box').innerText = '🎁';
+            document.getElementById('gacha-msg').innerText = '聖誕精靈正在為你挑選禮物...';
+            
+            let cls = localStorage.getItem('user_class');
+            let num = localStorage.getItem('user_num');
+            let name = localStorage.getItem('user_name');
+            
+            let payload = {
+                action: 'draw_prize',
+                className: cls, seatNum: num, studentName: name
+            };
+            
+            try {
+                let res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+                let data = await res.json();
+                
+                document.getElementById('gacha-box').className = '';
+                
+                if (data.status === 'success' || (data.status === 'error' && data.message.includes('已經抽過'))) {
+                    let prize = data.prize || data.message;
+                    document.getElementById('gacha-box').innerText = '🎉';
+                    document.getElementById('gacha-msg').innerHTML = `<h2 style="color:#f1c40f; margin-bottom: 10px;">恭喜抽中！</h2><div style="color:#c0392b; background:#fff; padding:15px; border-radius:10px; font-size: 24px; border: 3px solid #e74c3c;">${prize}</div>`;
+                    localStorage.setItem('has_won', 'true');
+                    localStorage.setItem('prize_name', prize);
+                    playSuccessSound();
+                    setupLotteryButton();
+                } else {
+                    document.getElementById('gacha-box').innerText = '😢';
+                    document.getElementById('gacha-msg').innerHTML = `<h3 style="color:#e74c3c;">${data.message}</h3>`;
+                }
+                document.getElementById('gacha-result').style.display = 'block';
             } catch(e) {
-                console.log("Audio play failed", e);
+                document.getElementById('gacha-box').className = '';
+                document.getElementById('gacha-box').innerText = '📡';
+                document.getElementById('gacha-msg').innerText = '連線失敗，請檢查網路後再試一次！';
+                document.getElementById('gacha-result').style.display = 'block';
+                btn.disabled = false;
+            }
+            isGachaRolling = false;
+        }
+
+        function closeGacha() {
+            document.getElementById('gachaModal').style.display = 'none';
+        }
+
+        function setupLotteryButton() {
+            let btnContainer = document.getElementById('lottery-btn-container');
+            let btn = document.getElementById('lottery-btn');
+            
+            if (totalPoints === 8) {
+                btnContainer.style.display = 'block';
+                if (localStorage.getItem('has_won') === 'true') {
+                    btn.className = 'lottery-btn won';
+                    btn.innerText = `🎉 已抽中：${localStorage.getItem('prize_name')}`;
+                    btn.onclick = null;
+                } else {
+                    btn.className = 'lottery-btn';
+                    btn.innerText = '🎁 滿8點過關！點我抽聖誕大獎';
+                    btn.onclick = startLottery;
+                }
+            } else {
+                btnContainer.style.display = 'none';
             }
         }
         
@@ -326,6 +422,13 @@
                     }
                     if (result.lastSubmitTime) {
                         localStorage.setItem('last_submission_time', result.lastSubmitTime);
+                    }
+                    if (result.hasWon) {
+                        localStorage.setItem('has_won', 'true');
+                        localStorage.setItem('prize_name', result.prizeName);
+                    } else {
+                        localStorage.removeItem('has_won');
+                        localStorage.removeItem('prize_name');
                     }
                 }
             } catch(e) {
@@ -428,7 +531,8 @@
                 card.classList.add('locked');
                 card.onclick = function(e){ 
                     e.preventDefault(); 
-                    alert(`⏳ 閱讀需要時間消化喔！\n你才剛完成其他任務，請再等 ${daysLeft} 天才能解鎖這一關。`);
+                    alert(`⏳ 閱讀需要時間消化喔！
+你才剛完成其他任務，請再等 ${daysLeft} 天才能解鎖這一關。`);
                 };
             }
             let pill = document.getElementById(pillId);
@@ -462,6 +566,8 @@
             if(st1 || st2) {
                 lockCards();
             }
+            
+            setupLotteryButton();
 
             if(st1.includes('已通過') && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png', 'lv1_badge_shown'); }
             else if(st2.includes('已通過') && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png', 'lv2_badge_shown'); }
@@ -476,6 +582,10 @@
         function showRewardModal(imageSrc, flagName) { 
             currentBadgeSrc = imageSrc; 
             currentFlag = flagName;
+            
+            let box = document.getElementById('gift-box');
+            if (box) box.style.animation = 'shake 1.5s infinite';
+            
             document.getElementById('gift-box-container').style.display = 'block';
             document.getElementById('badge-display').style.display = 'none';
             document.getElementById('rewardModal').style.display = 'block'; 
@@ -483,6 +593,9 @@
         
         function openGift() {
             playSuccessSound();
+            let box = document.getElementById('gift-box');
+            if (box) box.style.animation = 'none'; // 停止搖晃
+            
             document.getElementById('gift-box-container').style.display = 'none';
             document.getElementById('rewardImg').src = currentBadgeSrc;
             document.getElementById('badge-display').style.display = 'block';
