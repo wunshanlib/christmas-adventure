@@ -261,6 +261,16 @@
                 return;
             }
             
+            // Check date constraint
+            let inputDate = new Date(date);
+            let startDate = new Date('2024-11-11');
+            let endDate = new Date('2024-12-23');
+            
+            if (inputDate < startDate || inputDate > endDate) {
+                alert(`⛔ 日期錯誤：\n喜閱網過關日期必須介於 2024/11/11 ~ 2024/12/23 之間喔！`);
+                return;
+            }
+            
             let t1 = `過關日期：${date}\n獲得點數：${points}\n色標：${color}`; 
             await sendData(e, 3, bName, t1, "", "", 'file-upload'); 
         }
