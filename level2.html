@@ -117,6 +117,10 @@
             let status = localStorage.getItem('lv2_status') || "";
             let btn = document.querySelector('.submit-btn');
             
+            // 防呆：移除舊的警告框避免重複出現
+            let oldWarning = document.getElementById('reject-warning');
+            if(oldWarning) oldWarning.remove();
+            
             if(status.includes('已通過') || status.includes('✅') || status.includes('通過')) {
                 if(btn) {
                     btn.innerText = "本關卡已審核通過 ✅";
@@ -130,10 +134,19 @@
                     btn.style.background = "#f39c12";
                 }
             } else if(status.includes('需修正') || status.includes('❌') || status.includes('修正')) {
+                let reason = status.includes('-') ? status.split('-')[1] : "請重新確認填寫內容";
                 if(btn) {
-                    btn.innerText = "志工退件需修正，請修改後再次送出";
+                    btn.innerText = "重新送出審核";
                     btn.style.background = "#e74c3c";
                 }
+                
+                // 動態插入紅色警告框
+                let form = document.querySelector('form');
+                let warning = document.createElement('div');
+                warning.id = 'reject-warning';
+                warning.style = "background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 2px dashed #f5c6cb; font-weight: bold;";
+                warning.innerHTML = `⚠️ 志工退件提醒：<br>未通過原因為「<span style="color:red; font-size:18px;">${reason}</span>」<br>請修改下方內容後重新送出！`;
+                form.insertBefore(warning, form.firstChild);
             }
         }
         window.onload = function() { loadUserData(); if(localStorage.getItem('lv2_unlocked') === 'true') showMainForm(); };
@@ -150,7 +163,7 @@
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             for(let i=0; i<submittedBooks.length; i++) {
                 if(submittedBooks[i].book === bookName) {
-                    if (submittedBooks[i].level == 2 && submittedBooks[i].status.includes('修正')) {
+                    if (submittedBooks[i].level == 2 && submittedBooks[i].status && submittedBooks[i].status.includes('修正')) {
                         return false; 
                     }
                     alert(`⚠️ 你已經用過「${bookName}」這本書挑戰過囉！每本書只能闖一關，請換一本新的書來挑戰。`);
