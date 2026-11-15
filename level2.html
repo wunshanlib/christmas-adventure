@@ -114,12 +114,25 @@
             let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
             if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
             
-            if(localStorage.getItem('lv2_status') === 'approved') {
-                let btn = document.querySelector('.submit-btn');
+            let status = localStorage.getItem('lv2_status');
+            let btn = document.querySelector('.submit-btn');
+            
+            if(status === '✅ 已通過') {
                 if(btn) {
-                    btn.innerText = "本關卡任務已成功送出 ✅";
+                    btn.innerText = "本關卡已審核通過 ✅";
                     btn.disabled = true;
-                    btn.style.background = "#95a5a6";
+                    btn.style.background = "#27ae60";
+                }
+            } else if(status === '⏳ 待審核') {
+                if(btn) {
+                    btn.innerText = "任務正在審核中 ⏳";
+                    btn.disabled = true;
+                    btn.style.background = "#f39c12";
+                }
+            } else if(status === '❌ 需修正') {
+                if(btn) {
+                    btn.innerText = "志工退件需修正，請修改後再次送出";
+                    btn.style.background = "#e74c3c";
                 }
             }
         }
@@ -135,18 +148,25 @@
 
         function checkDuplicateSubmission(bookName) {
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
-            if(submittedBooks.includes(bookName)) {
-                alert(`⚠️ 你已經用過「${bookName}」這本書挑戰過囉！每本書只能闖一關，請換一本新的書來挑戰。`);
-                return true; 
+            for(let i=0; i<submittedBooks.length; i++) {
+                if(submittedBooks[i].book === bookName) {
+                    if (submittedBooks[i].level == 2 && submittedBooks[i].status === '❌ 需修正') {
+                        return false; 
+                    }
+                    alert(`⚠️ 你已經用過「${bookName}」這本書挑戰過囉！每本書只能闖一關，請換一本新的書來挑戰。`);
+                    return true; 
+                }
             }
             return false; 
         }
 
         function saveSubmission(bookName) {
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
-            submittedBooks.push(bookName);
+            submittedBooks = submittedBooks.filter(item => item.level != 2);
+            submittedBooks.push({book: bookName, level: 2, status: '⏳ 待審核'});
             localStorage.setItem('submitted_all_books', JSON.stringify(submittedBooks));
             localStorage.setItem('last_submission_time', new Date().toISOString());
+            localStorage.setItem('lv2_status', '⏳ 待審核');
         }
 
         async function sendData(e, levelId, bookName, task1, task2, task3, fileInputId) {
@@ -192,7 +212,6 @@
                 
                 saveSubmission(bookName);
                 alert("任務已成功送達圖書館！請等待志工審核。");
-                localStorage.setItem('lv' + levelId + '_status', 'approved'); 
                 window.location.href = 'index.html';
                 
             } catch(err) {
