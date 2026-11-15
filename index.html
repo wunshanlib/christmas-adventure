@@ -130,7 +130,7 @@
 <body>
     <div id="loginModal" class="modal" style="display:block; background-color:rgba(17,26,45,0.95);">
         <div class="login-box">
-            <h3>搭上聖誕班機，展開閱讀環遊世界！</h3>
+            <h3>搭上聖誕班機，展開閱讀環্যু世界！</h3>
             <div class="form-group">
                 <label>班級</label>
                 <select id="login-class">
@@ -352,7 +352,7 @@
         }
 
         function updateCardState(level, cardId, pillId, pointsToAdd) {
-            let status = localStorage.getItem('lv' + level + '_status');
+            let status = localStorage.getItem('lv' + level + '_status') || "";
             let card = document.getElementById(cardId);
             let pill = document.getElementById(pillId);
             
@@ -362,7 +362,13 @@
             card.classList.remove('completed', 'pending', 'rejected', 'locked');
             card.onclick = null;
             
-            if (status === '✅ 已通過') {
+            if (!status) {
+                pill.innerText = '未完成';
+                pill.style.background = 'rgba(0,0,0,0.6)';
+                pill.style.color = '#e67e22';
+                pill.style.borderColor = '#e67e22';
+            }
+            else if (status.includes('已通過') || status.includes('✅') || status.includes('通過')) {
                 card.classList.add('completed');
                 pill.innerText = '✅ 已通過';
                 pill.style.background = '#27ae60';
@@ -370,7 +376,7 @@
                 pill.style.borderColor = '#27ae60';
                 card.onclick = function(e){ e.preventDefault(); }; 
                 totalPoints += pointsToAdd;
-            } else if (status === '⏳ 待審核') {
+            } else if (status.includes('待審核') || status.includes('⏳') || status.includes('審核')) {
                 card.classList.add('pending');
                 pill.innerText = '⏳ 待審核';
                 pill.style.background = '#f39c12';
@@ -380,7 +386,7 @@
                     e.preventDefault(); 
                     alert("⏳ 你的任務正在審核中，圖書館志工看過後就會給點數囉！請耐心等候。"); 
                 };
-            } else if (status === '❌ 需修正') {
+            } else if (status.includes('需修正') || status.includes('❌') || status.includes('修正')) {
                 card.classList.add('rejected');
                 pill.innerText = '❌ 需修正';
                 pill.style.background = '#e74c3c';
@@ -405,10 +411,13 @@
                 
                 if (diffDays < 3) {
                     let remainingDays = 3 - diffDays;
+                    let st3 = localStorage.getItem('lv3_status') || "";
+                    let st4 = localStorage.getItem('lv4_status') || "";
+                    let st5 = localStorage.getItem('lv5_status') || "";
                     // 若狀態不是需修正，且也還沒過關或審核，才鎖定
-                    if(!localStorage.getItem('lv3_status')) lockCard('btn-lv3', 'pill-3', remainingDays);
-                    if(!localStorage.getItem('lv4_status')) lockCard('btn-lv4', 'pill-4', remainingDays);
-                    if(!localStorage.getItem('lv5_status')) lockCard('btn-lv5', 'pill-5', remainingDays);
+                    if(!st3) lockCard('btn-lv3', 'pill-3', remainingDays);
+                    if(!st4) lockCard('btn-lv4', 'pill-4', remainingDays);
+                    if(!st5) lockCard('btn-lv5', 'pill-5', remainingDays);
                 }
             }
         }
@@ -419,8 +428,7 @@
                 card.classList.add('locked');
                 card.onclick = function(e){ 
                     e.preventDefault(); 
-                    alert(`⏳ 閱讀需要時間消化喔！
-你才剛完成其他任務，請再等 ${daysLeft} 天才能解鎖這一關。`);
+                    alert(`⏳ 閱讀需要時間消化喔！\n你才剛完成其他任務，請再等 ${daysLeft} 天才能解鎖這一關。`);
                 };
             }
             let pill = document.getElementById(pillId);
@@ -449,15 +457,17 @@
             let pts = document.getElementById('total-points');
             if(pts) pts.innerText = totalPoints;
             
-            if(localStorage.getItem('lv1_status') || localStorage.getItem('lv2_status')) {
+            let st1 = localStorage.getItem('lv1_status') || "";
+            let st2 = localStorage.getItem('lv2_status') || "";
+            if(st1 || st2) {
                 lockCards();
             }
 
-            if(localStorage.getItem('lv1_status') === '✅ 已通過' && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png', 'lv1_badge_shown'); }
-            else if(localStorage.getItem('lv2_status') === '✅ 已通過' && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png', 'lv2_badge_shown'); }
-            else if(localStorage.getItem('lv3_status') === '✅ 已通過' && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png', 'lv3_badge_shown'); }
-            else if(localStorage.getItem('lv4_status') === '✅ 已通過' && localStorage.getItem('lv4_badge_shown') !== 'true') { showRewardModal('聖誕好書推薦員徽章-4.png', 'lv4_badge_shown'); }
-            else if(localStorage.getItem('lv5_status') === '✅ 已通過' && localStorage.getItem('lv5_badge_shown') !== 'true') { showRewardModal('聖誕故事解密閱讀徽章-5.png', 'lv5_badge_shown'); }
+            if(st1.includes('已通過') && localStorage.getItem('lv1_badge_shown') !== 'true') { showRewardModal('聖誕封面觀察小偵探-1.png', 'lv1_badge_shown'); }
+            else if(st2.includes('已通過') && localStorage.getItem('lv2_badge_shown') !== 'true') { showRewardModal('聖誕新書探索家徽章-2.png', 'lv2_badge_shown'); }
+            else if(localStorage.getItem('lv3_status') && localStorage.getItem('lv3_status').includes('已通過') && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png', 'lv3_badge_shown'); }
+            else if(localStorage.getItem('lv4_status') && localStorage.getItem('lv4_status').includes('已通過') && localStorage.getItem('lv4_badge_shown') !== 'true') { showRewardModal('聖誕好書推薦員徽章-4.png', 'lv4_badge_shown'); }
+            else if(localStorage.getItem('lv5_status') && localStorage.getItem('lv5_status').includes('已通過') && localStorage.getItem('lv5_badge_shown') !== 'true') { showRewardModal('聖誕故事解密閱讀徽章-5.png', 'lv5_badge_shown'); }
             else if(totalPoints >= 4 && totalPoints < 8 && localStorage.getItem('reward_4_claimed') !== 'true') { showRewardModal('4點-智慧水兌換徽章.png', 'reward_4_claimed'); }
             else if(totalPoints >= 8 && localStorage.getItem('reward_8_claimed') !== 'true') { showRewardModal('8點-閱讀大冒險過關證書.png', 'reward_8_claimed'); }
         }

@@ -114,22 +114,22 @@
             let cb = document.getElementById('culture-box'); let mf = document.getElementById('main-task-form');
             if(cb) cb.style.display = 'none'; if(mf) mf.style.display = 'block';
             
-            let status = localStorage.getItem('lv5_status');
+            let status = localStorage.getItem('lv5_status') || "";
             let btn = document.querySelector('.submit-btn');
             
-            if(status === '✅ 已通過') {
+            if(status.includes('已通過') || status.includes('✅') || status.includes('通過')) {
                 if(btn) {
                     btn.innerText = "本關卡已審核通過 ✅";
                     btn.disabled = true;
                     btn.style.background = "#27ae60";
                 }
-            } else if(status === '⏳ 待審核') {
+            } else if(status.includes('待審核') || status.includes('⏳') || status.includes('審核')) {
                 if(btn) {
                     btn.innerText = "任務正在審核中 ⏳";
                     btn.disabled = true;
                     btn.style.background = "#f39c12";
                 }
-            } else if(status === '❌ 需修正') {
+            } else if(status.includes('需修正') || status.includes('❌') || status.includes('修正')) {
                 if(btn) {
                     btn.innerText = "志工退件需修正，請修改後再次送出";
                     btn.style.background = "#e74c3c";
@@ -150,7 +150,7 @@
             let submittedBooks = JSON.parse(localStorage.getItem('submitted_all_books') || '[]');
             for(let i=0; i<submittedBooks.length; i++) {
                 if(submittedBooks[i].book === bookName) {
-                    if (submittedBooks[i].level == 5 && submittedBooks[i].status === '❌ 需修正') {
+                    if (submittedBooks[i].level == 5 && submittedBooks[i].status.includes('修正')) {
                         return false; 
                     }
                     alert(`⚠️ 你已經用過「${bookName}」這本書挑戰過囉！每本書只能闖一關，請換一本新的書來挑戰。`);
