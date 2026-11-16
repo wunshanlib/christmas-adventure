@@ -248,11 +248,11 @@
             let color = document.getElementById('color').value; 
             
             let inputDate = new Date(date);
-            let startDate = new Date('2024-11-11');
-            let endDate = new Date('2024-12-23');
+            let startDate = new Date('2026-11-11'); // Updated to 2026
+            let endDate = new Date('2026-12-23');   // Updated to 2026
             
             if (inputDate < startDate || inputDate > endDate) {
-                alert(`⛔ 日期錯誤：\n喜閱網過關日期必須介於 2024/11/11 ~ 2024/12/23 之間喔！`);
+                alert(`⛔ 日期錯誤：\n喜閱網過關日期必須介於 2026/11/11 ~ 2026/12/23 之間喔！`);
                 return;
             }
             
