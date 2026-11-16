@@ -98,6 +98,8 @@
         
         .water-btn { background: linear-gradient(45deg, #3498db, #2980b9); color: white; border: 4px solid #ecf0f1; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 0 15px rgba(52, 152, 219, 0.6); transition: 0.3s; width: 90%; max-width: 300px; margin-bottom: 10px;}
         .water-btn:hover { transform: scale(1.05); background: linear-gradient(45deg, #2980b9, #1f618d); }
+        .water-btn.won { background: #27ae60; border-color: #2ecc71; cursor: default; box-shadow: 0 4px 10px rgba(0,0,0,0.5);}
+        .water-btn.won:hover { transform: none; background: #27ae60; }
         
         @keyframes pulse { 0% {box-shadow: 0 0 10px #f1c40f;} 50% {box-shadow: 0 0 25px #f39c12;} 100% {box-shadow: 0 0 10px #f1c40f;} }
         
@@ -179,7 +181,7 @@
             </ol>
             <h3>🎁 獎勵辦法</h3>
             <ul>
-                <li>集滿 <strong>4 點</strong>：可獲得「智慧水兌換徽章」（憑畫面至圖書館兌換）。</li>
+                <li>集滿 <strong>4 點</strong>：即可線上登記兌換，圖書館志工會為您發放「智慧水」。</li>
                 <li>集滿 <strong>8 點</strong> (全數通過審核)：可直接在網頁上解鎖「聖誕大抽獎」，馬上抽馬上看結果！</li>
             </ul>
             <div style="text-align: center; margin-top: 25px;">
@@ -203,9 +205,9 @@
     <div class="map-wrapper">
         <!-- 按鈕顯示區塊 -->
         <div id="lottery-btn-container" style="display:none; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 50; width: 100%; text-align: center;">
-            <button id="water-btn" class="water-btn" style="display:none;" onclick="showRewardModal('4點-智慧水兌換徽章.png', 'reward_4_claimed')">💧 恭喜滿 4 點！點我出示智慧水兌換畫面</button>
+            <button id="water-btn" class="water-btn" style="display:none;" onclick="claimWater()">💧 恭喜滿 4 點！點我登記兌換智慧水</button>
             <br>
-            <button id="lottery-btn" onclick="startLottery()" class="lottery-btn">🎁 滿 8 點解鎖！點我抽聖誕大獎</button>
+            <button id="lottery-btn" onclick="startLottery()" class="lottery-btn" style="display:none;">🎁 滿 8 點解鎖！點我抽聖誕大獎</button>
         </div>
 
         <a href="level1.html" class="glass-card" id="btn-lv1">
@@ -273,7 +275,7 @@
         
         function playInfoAudio() {
             window.speechSynthesis.cancel();
-            let text = "歡迎來到奇幻聖誕村！這裡有五個不同的國家站點等待你來探索。闖關步驟與規則：第一、點擊地圖上的卡片進入關卡。第二、閱讀該國的聖誕文化報報。第三、通過選擇題測驗，解鎖閱讀任務。第四、時間限制部分，除了第一關與第二關可以同時進行外，後續關卡必須間隔三天才能闖關喔！第五、每關必須使用不同的書，且前兩關必須是新書。最後送出任務，等待圖書館志工審核。送出後會顯示待審核，通過後才能獲得點數喔！若被退回需修正，可以重新點入該關卡修改。集滿4點可獲得智慧水兌換徽章，五關全數通過集滿8點，更可以直接在網頁上解鎖聖誕大抽獎！馬上抽馬上看結果！";
+            let text = "歡迎來到奇幻聖誕村！這裡有五個不同的國家站點等待你來探索。闖關步驟與規則：第一、點擊地圖上的卡片進入關卡。第二、閱讀該國的聖誕文化報報。第三、通過選擇題測驗，解鎖閱讀任務。第四、時間限制部分，除了第一關與第二關可以同時進行外，後續關卡必須間隔三天才能闖關喔！第五、每關必須使用不同的書，且前兩關必須是新書。最後送出任務，等待圖書館志工審核。集滿4點可以線上登記兌換智慧水，五關全數通過集滿8點，可以直接在網頁上解鎖聖誕大抽獎！馬上抽馬上看結果！";
             let msg = new SpeechSynthesisUtterance(text); 
             msg.lang = 'zh-TW'; 
             msg.rate = 0.9;
@@ -313,7 +315,7 @@
 
                 if(isCongrats) {
                     setTimeout(() => {
-                        let text = "恭喜你得到獎勵囉！快帶著這張畫面去教務處或圖書館兌換吧！";
+                        let text = "恭喜你得到獎勵囉！快去教務處或圖書館領取吧！";
                         let msg = new SpeechSynthesisUtterance(text); 
                         msg.lang = 'zh-TW'; 
                         msg.rate = 1.0;
@@ -324,6 +326,37 @@
                     }, 1200);
                 }
             } catch(e) { console.log("Audio play failed", e); }
+        }
+
+        async function claimWater() {
+            let btn = document.getElementById('water-btn');
+            btn.disabled = true;
+            btn.innerText = "資料傳送中...";
+            
+            let cls = localStorage.getItem('user_class');
+            let num = localStorage.getItem('user_num');
+            let name = localStorage.getItem('user_name');
+            
+            let payload = { action: 'claim_water', className: cls, seatNum: num, studentName: name };
+            
+            try {
+                let res = await fetch(GAS_URL, { method: 'POST', body: JSON.stringify(payload) });
+                let data = await res.json();
+                
+                if (data.status === 'success' || (data.status === 'error' && data.message.includes('已經登記'))) {
+                    localStorage.setItem('water_claimed', 'true');
+                    showRewardModal('4點-智慧水兌換徽章.png', 'reward_4_claimed', true);
+                    setupActionButtons();
+                } else {
+                    alert(data.message);
+                    btn.disabled = false;
+                    btn.innerText = "💧 恭喜滿 4 點！點我登記兌換智慧水";
+                }
+            } catch(e) {
+                alert("連線失敗，請檢查網路後再試！");
+                btn.disabled = false;
+                btn.innerText = "💧 恭喜滿 4 點！點我登記兌換智慧水";
+            }
         }
 
         async function startLottery() {
@@ -392,6 +425,15 @@
             if (totalPoints >= 4) {
                 btnContainer.style.display = 'block';
                 waterBtn.style.display = 'inline-block';
+                if (localStorage.getItem('water_claimed') === 'true') {
+                    waterBtn.className = 'water-btn won';
+                    waterBtn.innerText = `✅ 已登記：請至圖書館領取智慧水`;
+                    waterBtn.onclick = null;
+                } else {
+                    waterBtn.className = 'water-btn';
+                    waterBtn.innerText = '💧 恭喜滿 4 點！點我登記兌換智慧水';
+                    waterBtn.onclick = claimWater;
+                }
             }
 
             if (totalPoints === 8) {
@@ -442,6 +484,11 @@
                     } else {
                         localStorage.removeItem('has_won');
                         localStorage.removeItem('prize_name');
+                    }
+                    if (result.waterClaimed) {
+                        localStorage.setItem('water_claimed', 'true');
+                    } else {
+                        localStorage.removeItem('water_claimed');
                     }
                 }
             } catch(e) {
@@ -591,7 +638,6 @@
             else if(localStorage.getItem('lv3_status') && localStorage.getItem('lv3_status').includes('已通過') && localStorage.getItem('lv3_badge_shown') !== 'true') { showRewardModal('雪國閱讀挑戰王-3.png', 'lv3_badge_shown'); }
             else if(localStorage.getItem('lv4_status') && localStorage.getItem('lv4_status').includes('已通過') && localStorage.getItem('lv4_badge_shown') !== 'true') { showRewardModal('聖誕好書推薦員徽章-4.png', 'lv4_badge_shown'); }
             else if(localStorage.getItem('lv5_status') && localStorage.getItem('lv5_status').includes('已通過') && localStorage.getItem('lv5_badge_shown') !== 'true') { showRewardModal('聖誕故事解密閱讀徽章-5.png', 'lv5_badge_shown'); }
-            else if(totalPoints >= 4 && totalPoints < 8 && localStorage.getItem('reward_4_claimed') !== 'true') { showRewardModal('4點-智慧水兌換徽章.png', 'reward_4_claimed', true); }
             else if(totalPoints >= 8 && localStorage.getItem('reward_8_claimed') !== 'true') { showRewardModal('8點-閱讀大冒險過關證書.png', 'reward_8_claimed', true); }
         }
         
