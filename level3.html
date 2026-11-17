@@ -168,6 +168,13 @@
                     if (submittedBooks[i].level == 3 && submittedBooks[i].status && submittedBooks[i].status.includes('修正')) {
                         return false; 
                     }
+                    
+                    // Allow level 1 and level 2 to share the same book
+                    if ((3 === 1 && submittedBooks[i].level === 2) || 
+                        (3 === 2 && submittedBooks[i].level === 1)) {
+                        return false;
+                    }
+                    
                     alert(`⚠️ 你已經用過「${bookName}」這本書挑戰過囉！每本書只能闖一關，請換一本新的書來挑戰。`);
                     return true; 
                 }
